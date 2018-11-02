@@ -4,7 +4,7 @@
             <div class="navbar">
                 <div class="navbar-top">
                     <ul>
-                        <li><a href="javascript:void(0)"><img :src="user.image" alt="user-img"></a></li>
+                        <li><a href="javascript:void(0)"><img :src="currentUser.image" alt="user-img"></a></li>
                         <li>
                             <a href="javascript:void(0)" class="popper-link" v-show="!chatclicked" @click="active('chat')">
                                 <i class="icon icon-chat-o"></i>
@@ -57,30 +57,30 @@
                 </div>
                 <div class="contact-list">
                     <ul>
-                        <li @click="openChatBox(user)">
+                        <li @click="openChatBox(currentUser)">
                             <div class="li-img">
-                                <img :src="user.image" alt="chat-list-img">
+                                <img :src="currentUser.image" alt="chat-list-img">
                             </div>
                             <div class="li-text">
-                                <span class="name"><label>{{user.name}}</label><label class="time">18/10/10</label></span>
+                                <span class="name"><label>{{currentUser.name}}</label><label class="time">18/10/10</label></span>
                                 <span class="text">亲爱的，你洗好澡了吗？</span>
                             </div>
                         </li>
-                        <li @click="openChatBox(user)">
+                        <li @click="openChatBox(currentUser)">
                             <div class="li-img">
-                                <img :src="user.image" alt="chat-list-img">
+                                <img :src="currentUser.image" alt="chat-list-img">
                             </div>
                             <div class="li-text">
-                                <span class="name"><label>{{user.name}}</label><label class="time">22:45</label></span>
+                                <span class="name"><label>{{currentUser.name}}</label><label class="time">22:45</label></span>
                                 <span class="text">亲爱的，你洗好澡了吗？</span>
                             </div>
                         </li>
-                        <li @click="openChatBox(user)">
+                        <li @click="openChatBox(currentUser)">
                             <div class="li-img">
-                                <img :src="user.image" alt="chat-list-img">
+                                <img :src="currentUser.image" alt="chat-list-img">
                             </div>
                             <div class="li-text">
-                                <span class="name"><label>{{user.name}}</label><label class="time">21:45</label></span>
+                                <span class="name"><label>{{currentUser.name}}</label><label class="time">21:45</label></span>
                                 <span class="text">亲爱的，你洗好澡了吗？</span>
                             </div>
                         </li>
@@ -108,7 +108,7 @@
                         </a>
                     </p>
                     <p class="namebar">
-                        <label class="name">{{user.name}}</label>
+                        <label class="name">{{currentUser.name}}</label>
                         <a href="javascript:void(0)" class="more-link"><i class="icon icon-more"></i></a>
                     </p>
                 </div>
@@ -119,7 +119,7 @@
                                 <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
                                 <span class="content content-left">{{content.message}}</span>
                             </p>
-                            <p class="text-right" v-else>
+                            <p class="text-right" v-else>  
                                 <span class="content content-right">{{content.message}}</span>
                                 <span><img :src="currentUser.image" alt="user-img" class="user-img"></span>
                             </p>
@@ -157,7 +157,7 @@
                             </a>
                         </p>
                     </div>
-                    <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent"></textarea>
+                    <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent" @keyup.enter="send"></textarea>
                     <p class="text-right">
                         <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
                         </p>
@@ -175,17 +175,18 @@ export default {
       chatclicked: true,
       collectclicked: false,
       searchfocused: false,
+      chatcontent: '',
       currentUser: {
         id: 2,
         name: 'Chen',
-        image: require('../assets/user1.png')
+        image: require('../assets/user.png')
       },
       contents: [
         {
           user: {
             id: 1,
             name: 'Richole',
-            image: require('../assets/user.png')
+            image: require('../assets/user1.png')
           },
           message: '亲爱的，我下班了'
         },
@@ -193,7 +194,7 @@ export default {
           user: {
             id: 2,
             name: 'Chen',
-            image: require('../assets/user1.png')
+            image: require('../assets/user.png')
           },
           message: '好，吃饭了吗？'
         },
@@ -201,7 +202,7 @@ export default {
           user: {
             id: 1,
             name: 'Richole',
-            image: require('../assets/user.png')
+            image: require('../assets/user1.png')
           },
           message: '吃了，你呢'
         }
@@ -236,6 +237,7 @@ export default {
         user: this.currentUser,
         message: this.chatcontent
       })
+      this.chatcontent = ''
     }
   }
 }
@@ -555,7 +557,7 @@ export default {
                 box-sizing: border-box;
                 border: none;
                 resize: none;
-                font-size: 20px;
+                font-size: 16px;
             }
             .send-btn {
                 display: inline-block;
