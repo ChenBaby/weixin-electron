@@ -6,41 +6,48 @@
                     <ul>
                         <li><a href="javascript:void(0)"><img :src="user.image" alt="user-img"></a></li>
                         <li>
-                            <a href="javascript:void(0)" v-show="!chatclicked" @click="active('chat')">
+                            <a href="javascript:void(0)" class="popper-link" v-show="!chatclicked" @click="active('chat')">
                                 <i class="icon icon-chat-o"></i>
+                                <label class="popper">聊天</label>
                             </a>
-                            <a href="javascript:void(0)" v-show="chatclicked">
+                            <a href="javascript:void(0)" class="popper-link" v-show="chatclicked">
                                 <i class="icon icon-chat"></i>
+                                <label class="popper">聊天</label>
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" v-show="!listclicked" @click="active('list')">
+                            <a href="javascript:void(0)" class="popper-link" v-show="!listclicked" @click="active('list')">
                                 <i class="icon icon-user-list-o"></i>
+                                <label class="popper">通讯录</label>
                             </a>
-                            <a href="javascript:void(0)" v-show="listclicked">
+                            <a href="javascript:void(0)" class="popper-link" v-show="listclicked">
                                 <i class="icon icon-user-list"></i>
+                                <label class="popper">通讯录</label>
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" v-show="!collectclicked" @click="active('collect')">
+                            <a href="javascript:void(0)" class="popper-link" v-show="!collectclicked" @click="active('collect')">
                                 <i class="icon icon-collect-o"></i>
+                                <label class="popper">收藏</label>
                             </a>
-                            <a href="javascript:void(0)" v-show="collectclicked">
+                            <a href="javascript:void(0)" class="popper-link" v-show="collectclicked">
                                 <i class="icon icon-collect"></i>
+                                <label class="popper">收藏</label>
                             </a>
                         </li>
                     </ul>
                 </div>
                 <div class="navbar-bottom">
-                    <a href="javascript:void(0)">
+                    <a href="javascript:void(0)" class="popper-link setting-link">
                         <i class="icon icon-setting"></i>
+                        <label class="popper">更多</label>
                     </a>
                 </div>
             </div>
             <div class="contact-box">
                 <div class="contact-header">
                     <span class="contact-search" :class="{'input-focus': searchfocused}">
-                        <label><i class="icon icon-search"></i></label>
+                        <label class="icon-label"><i class="icon icon-search"></i></label>
                         <input type="text" placeholder="搜索" @focus="searchfocused = true" @blur="searchfocused = false">
                         <label class="close-label" v-show="searchfocused" @click="searchfocused = false"><i class="icon icon-close"></i></label>
                     </span>
@@ -83,10 +90,22 @@
             <div class="chat-box">
                 <div class="chat-header">
                     <p class="toolbar">
-                        <a href="javascript:void(0)"><i class="icon icon-zhiding"></i></a>
-                        <a href="javascript:void(0)"><i class="icon icon-minimize"></i></a>
-                        <a href="javascript:void(0)"><i class="icon icon-maximize"></i></a>
-                        <a href="javascript:void(0)"><i class="icon icon-close"></i></a>
+                        <a href="javascript:void(0)" class="popper-link">
+                            <i class="icon icon-zhiding"></i>
+                            <label class="popper">置顶</label>
+                        </a>
+                        <a href="javascript:void(0)" class="popper-link">
+                            <i class="icon icon-minimize"></i>
+                            <label class="popper">最小化</label>
+                        </a>
+                        <a href="javascript:void(0)" class="popper-link">
+                            <i class="icon icon-maximize"></i>
+                            <label class="popper">最大化</label>
+                        </a>
+                        <a href="javascript:void(0)" class="popper-link">
+                            <i class="icon icon-close"></i>
+                            <label class="popper">关闭</label>
+                        </a>
                     </p>
                     <p class="namebar">
                         <label class="name">{{user.name}}</label>
@@ -94,20 +113,54 @@
                     </p>
                 </div>
                 <div class="chat-content">
-                    <div>
-                        <p class="text-left">
-                            <span><img :src="user1.image" alt="user-img" class="user-img"></span>
-                            <span class="content content-left">你吃饭了吗？我下班了</span>
+                    <div class="content-box">
+                        <div v-for="(content, index) in contents" :key="index">
+                            <p class="text-left" v-if="content.user.id != currentUser.id">
+                                <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
+                                <span class="content content-left">{{content.message}}</span>
+                            </p>
+                            <p class="text-right" v-else>
+                                <span class="content content-right">{{content.message}}</span>
+                                <span><img :src="currentUser.image" alt="user-img" class="user-img"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-send">
+                    <div class="toolbar">
+                        <p class="toolbar-left">
+                            <a href="javascript:void(0)" class="popper-link">
+                                <i class="icon icon-xiaolian"></i>
+                                <label class="popper">表情</label>
+                            </a>
+                            <a href="javascript:void(0)" class="popper-link">
+                                <i class="icon icon-wenjianjia"></i>
+                                <label class="popper">发送文件</label>
+                            </a>
+                            <a href="javascript:void(0)" class="popper-link">
+                                <i class="icon icon-jianqie"></i>
+                                <label class="popper">截图</label>
+                            </a>
+                            <a href="javascript:void(0)" class="popper-link liaotianjilu">
+                                <i class="icon icon-liaotianjilu"></i>
+                                <label class="popper">聊天记录</label>
+                            </a>
                         </p>
-                        <p class="text-right">
-                            <span class="content content-right">你吃饭了吗？我下班了</span>
-                            <span><img :src="user.image" alt="user-img" class="user-img"></span>
-                        </p>
-                        <p class="text-left">
-                            <span><img :src="user1.image" alt="user-img" class="user-img"></span>
-                            <span class="content content-left">你吃饭了吗？我下班了，准备坐地铁，你做饭了吗？今晚吃什么啊，亲爱的工作辛不辛苦，我好心疼</span>
+                        <p class="toolbar-right">
+                            <a href="javascript:void(0)" class="popper-link">
+                                <i class="icon icon-dianhua"></i>
+                                <label class="popper">语音聊天</label>
+                            </a>
+                            <a href="javascript:void(0)" class="popper-link">
+                                <i class="icon icon-shipin"></i>
+                                <label class="popper">视频聊天</label>
+                            </a>
                         </p>
                     </div>
+                    <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent"></textarea>
+                    <p class="text-right">
+                        <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
+                        </p>
                 </div>
             </div>
         </div>
@@ -122,14 +175,37 @@ export default {
       chatclicked: true,
       collectclicked: false,
       searchfocused: false,
-      user: {
-        name: 'Richole',
-        image: require('../assets/user.png')
-      },
-      user1: {
+      currentUser: {
+        id: 2,
         name: 'Chen',
         image: require('../assets/user1.png')
-      }
+      },
+      contents: [
+        {
+          user: {
+            id: 1,
+            name: 'Richole',
+            image: require('../assets/user.png')
+          },
+          message: '亲爱的，我下班了'
+        },
+        {
+          user: {
+            id: 2,
+            name: 'Chen',
+            image: require('../assets/user1.png')
+          },
+          message: '好，吃饭了吗？'
+        },
+        {
+          user: {
+            id: 1,
+            name: 'Richole',
+            image: require('../assets/user.png')
+          },
+          message: '吃了，你呢'
+        }
+      ]
     }
   },
   methods: {
@@ -154,6 +230,12 @@ export default {
     },
     openChatBox (user) {
       console.log('打开某人的聊天窗口')
+    },
+    send () {
+      this.contents.push({
+        user: this.currentUser,
+        message: this.chatcontent
+      })
     }
   }
 }
@@ -164,6 +246,30 @@ export default {
         height: 640px;
         display: flex;
         align-content: center;
+        border-top: solid 1px #ccc;
+        border-bottom: solid 1px #ccc;
+    }
+    .popper-link {
+        position: relative;
+        .popper {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            font-size: 12px;
+            white-space: nowrap;
+            text-align: center;
+            background-color: #fff;
+            padding: 2px;
+            border: solid 1px #666;
+            box-shadow: rgba(153, 153, 153, 0.4) 2px 2px;
+            color: initial;
+        }
+        &:hover {
+            .popper {
+                display: block;
+            }
+        }
     }
     .navbar {
         background-color:#28282b;
@@ -205,6 +311,19 @@ export default {
             padding-bottom: 24px;
             transform: translate(-50%);
         }
+        .setting-link {
+            &:after {
+                content: '';
+                width: 8px;
+                height: 8px;
+                background-color: red;
+                position: absolute;
+                top: 3px;
+                left: 23px;
+                border-radius: 50%;
+            }
+
+        }
     }
     .contact-box {
         width: 31%;
@@ -213,17 +332,18 @@ export default {
         .contact-header {
             padding: 0px 20px;
             height: 60px;
-            line-height: 60px;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .contact-search {
-            width: 86%;
-            height: 24px;
+            width: 82%;
             background-color: #DBD9D8;
             display: inline-block;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
+            justify-content: space-around;
             padding: 4px;
             border: solid 1px #DBD9D8;
             &.input-focus {
@@ -231,29 +351,43 @@ export default {
             }
             .icon-search {
                 font-size: 14px;
-                vertical-align: middle;
-                position: relative;
-                left: 3px;
             }
             input {
-                width: 180px;
-                position: relative;
-                left: 10px;
+                width: 82%;
                 background: none;
                 border: none;
+                position: relative;
+                &::-webkit-input-placeholder{
+                    position: relative;
+                    top: 1px;
+                }
+                &:-moz-placeholder{
+                    position: relative;
+                    top: 1px;
+                }
+                &::-moz-placeholder{
+                    position: relative;
+                    top: 1px;
+                }
+                &:-ms-input-placeholder{
+                    position: relative;
+                    top: 1px;
+                }
                 &:focus {
                     background-color: #fff;
                     border: none;
+                    left: 2px;
                 }
             }
+            .icon-label {
+                width: 5%;
+            }
             .close-label {
-                position: relative;
-                left: 12px;
                 width: 18px;
                 height: 18px;
+                line-height: 18px;
                 background-color: #ddd;
                 border-radius: 50%;
-                line-height: 18px;
                 .icon-close {
                     font-size: 18px;
                 }
@@ -263,15 +397,6 @@ export default {
             padding: 4px;
             background-color: #DBD9D8;
             border-radius: 4px;
-            position: absolute;
-            top: 17px;
-            right: 20px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 30px;
-            height: 30px;
-            box-sizing: border-box;
             .icon-plus {
                 font-size: 16px;
             }
@@ -299,12 +424,12 @@ export default {
             }
             .li-text {
                 padding-left: 10px;
+                width: 100%;
                 span {
                     display: block;
                     height: 20px;
                     line-height: 20px;
                     text-align: left;
-                    width: 230px;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
@@ -325,6 +450,7 @@ export default {
         width: 63%;
         height: 100%;
         background: #F5F5F5;
+        position: relative;
         .chat-header {
             height: 60px;
             display: flex;
@@ -408,6 +534,62 @@ export default {
                 border-width: 9px;
             }
             }
+        }
+        .chat-send {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            padding: 10px 30px;
+            background-color: #fff;
+            width: 100%;
+            box-sizing: border-box;
+            .toolbar {
+                height: 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+            textarea {
+                width: 100%;
+                box-sizing: border-box;
+                border: none;
+                resize: none;
+                font-size: 20px;
+            }
+            .send-btn {
+                display: inline-block;
+                width: 60px;
+                height: 20px;
+                padding: 5px;
+                background-color: #eee;
+                text-align: center;
+                line-height: 20px;
+                border: solid 1px #ddd;
+            }
+            .icon-xiaolian {
+                margin-left: 0px;
+            }
+            .liaotianjilu {
+                vertical-align: top;
+                display: inline-block;
+            }
+            .icon-liaotianjilu {
+                font-size: 17px;
+            }
+        }
+    }
+    @media (min-width: 1280) {
+        .contact-box .contact-search {
+            width: 86%;
+        }
+    }
+    @media (max-width: 768px) {
+        .contact-box .contact-header {
+            padding: 0 10px;
+        }
+        .contact-box .contact-list li {
+            padding: 10px;
         }
     }
 </style>
