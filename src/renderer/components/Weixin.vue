@@ -169,6 +169,25 @@
 <script>
 export default {
   name: 'Weixin',
+  mounted () {
+    var fs = require('fs')
+    var writeStream = fs.createWriteStream('./log/10001.log')
+    writeStream.write(JSON.stringify({
+      name: 'richole',
+      img: '---',
+      id: 10001,
+      data: [
+        {
+          time: 1541338981084,
+          message: '老婆在不在'
+        }, {
+          time: 1541339095342,
+          message: '今晚约吗'
+        }
+      ]
+    }))
+    writeStream.end()
+  },
   data: function () {
     return {
       listclicked: false,
