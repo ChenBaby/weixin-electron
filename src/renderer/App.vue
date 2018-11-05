@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view class="full-height"></router-view>
   </div>
 </template>
 
@@ -13,4 +13,7 @@
 <style>
     @import '~@/assets/css/customized.less';
   /* CSS */
+  #app {
+      height: 100%;
+  }
 </style>

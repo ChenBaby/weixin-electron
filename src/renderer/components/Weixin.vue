@@ -1,10 +1,14 @@
 <template>
-    <div class="wechat-page">
+    <div class="wechat-page" @click="closeInfoPanel">
         <div class="main-box">
             <div class="navbar">
                 <div class="navbar-top">
                     <ul>
-                        <li><a href="javascript:void(0)"><img :src="currentUser.image" alt="user-img"></a></li>
+                        <li>
+                            <a href="javascript:void(0)" @click.stop="infoPopuped = true">
+                                <img :src="currentUser.image" alt="user-img">
+                            </a>
+                        </li>
                         <li>
                             <a href="javascript:void(0)" class="popper-link" v-show="!chatclicked" @click="active('chat')">
                                 <i class="icon icon-chat-o"></i>
@@ -42,6 +46,30 @@
                         <i class="icon icon-setting"></i>
                         <label class="popper">更多</label>
                     </a>
+                </div>
+                <div class="info-popup" :class="{show: infoPopuped}" ref="userInfo">
+                    <div class="popup-head">
+                        <div class="name-box text-left">
+                            <span>{{currentUser.name}}<i class="icon icon-girl"></i></span>
+                            <span><label>微信号:</label>{{currentUser.id}}</span>
+                        </div>
+                        <div class="img-box">
+                            <img src="../assets/user.png" alt="user-img">
+                        </div>
+                    </div>
+                    <p class="text-left address-panel">
+                        <span>
+                            <label class="address-label">地区</label>
+                            <label class="address-value">广东惠州</label>
+                        </span>
+                    </p>
+                    <p class="popup-icons clearfix">
+                        <span class="float-left"><a href="/info">编辑信息</a></span>
+                        <span class="float-right">
+                            <a href="javascript:void(0)"><i class="icon icon-share"></i></a>
+                            <a href="javascript:void(0)"><i class="icon icon-chat-o"></i></a>
+                        </span>
+                    </p>
                 </div>
             </div>
             <div class="contact-box">
@@ -170,23 +198,6 @@
 export default {
   name: 'Weixin',
   mounted () {
-    var fs = require('fs')
-    var writeStream = fs.createWriteStream('./log/10001.log')
-    writeStream.write(JSON.stringify({
-      name: 'richole',
-      img: '---',
-      id: 10001,
-      data: [
-        {
-          time: 1541338981084,
-          message: '老婆在不在'
-        }, {
-          time: 1541339095342,
-          message: '今晚约吗'
-        }
-      ]
-    }))
-    writeStream.end()
   },
   data: function () {
     return {
@@ -195,6 +206,7 @@ export default {
       collectclicked: false,
       searchfocused: false,
       chatcontent: '',
+      infoPopuped: false,
       currentUser: {
         id: 2,
         name: 'Chen',
@@ -229,6 +241,14 @@ export default {
     }
   },
   methods: {
+    closeInfoPanel (event) {
+      var infoBox = this.$refs.userInfo
+      if (infoBox) {
+        if (!infoBox.contains(event.target)) {
+          this.infoPopuped = false
+        }
+      }
+    },
     active (el) {
       switch (el) {
         case 'chat':
@@ -264,7 +284,7 @@ export default {
 <style lang="less" scoped>
     .main-box {
         width: 100%;
-        height: 640px;
+        height: 100%;
         display: flex;
         align-content: center;
         border-top: solid 1px #ccc;
@@ -284,7 +304,7 @@ export default {
             padding: 2px;
             border: solid 1px #666;
             box-shadow: rgba(153, 153, 153, 0.4) 2px 2px;
-            color: initial;
+            color: #555;
         }
         &:hover {
             .popper {
@@ -306,14 +326,14 @@ export default {
             margin-top: 24px;
 
         }
-        img {
+        .navbar-top img {
             width: 50%;
         }
         .icon {
             font-size: 26px;
             color: #666;
         }
-        .icon-chat-o {
+        .navbar-top .icon-chat-o {
             font-weight: 600;
         }
         .icon-chat {
@@ -331,6 +351,77 @@ export default {
             bottom: 0;
             padding-bottom: 24px;
             transform: translate(-50%);
+        }
+        .info-popup {
+            width: 300px;
+            height: 228px;
+            position: absolute;
+            top: 40px;
+            left: 30px;
+            background-color: #fff;
+            color: initial;
+            padding: 24px;
+            box-sizing: border-box;
+            z-index: 100;
+            display: none;
+            &.show {
+                display: block;
+            }
+            .popup-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 60px;
+                padding-bottom: 20px;
+                border-bottom: solid 1px #eee;
+            }
+            .name-box {
+                span {
+                    height: 30px;
+                    line-height: 30px;
+                    display: block;
+                }
+                label {
+                    margin-right: 5px;
+                }
+            }
+            .img-box {
+                height: 60px;
+                img {
+                    width: 60px;
+                }
+            }
+            .icon-girl {
+                color: pink;
+                font-size: 14px;
+                margin-left: 5px;
+            }
+            .icon-boy {
+                color: skyblue;
+                font-size: 14px;
+                margin-left: 5px;
+            }
+            .address-panel {
+                margin: 25px 0;
+            }
+            .address-label {
+                color: #999;
+                margin-right: 20px;
+            }
+            .popup-icons {
+                line-height: 28.8px;
+                .icon {
+                    margin: 0 10px;
+                }
+                .float-left {
+                    float: left;
+                    font-size: 12px;
+                    color: #e84949;
+                }
+                .float-right {
+                    float: right;
+                }
+            }
         }
         .setting-link {
             &:after {

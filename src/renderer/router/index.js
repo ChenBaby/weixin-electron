@@ -4,6 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -11,8 +12,19 @@ export default new Router({
       component: require('@/components/Weixin').default
     },
     {
-      path: '*',
-      redirect: '/'
+      path: '/info',
+      name: 'Infoedit',
+      component: require('@/components/Infoedit').default
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: require('@/components/Login').default
+    },
+    {
+      path: '/regist',
+      name: 'Regist',
+      component: require('@/components/Regist').default
     }
   ]
 })
