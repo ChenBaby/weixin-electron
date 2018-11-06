@@ -54,7 +54,7 @@
                             <span><label>微信号:</label>{{currentUser.id}}</span>
                         </div>
                         <div class="img-box">
-                            <img src="../assets/user.png" alt="user-img">
+                            <img src="../assets/images/user.png" alt="user-img">
                         </div>
                     </div>
                     <p class="text-left address-panel">
@@ -64,7 +64,9 @@
                         </span>
                     </p>
                     <p class="popup-icons clearfix">
-                        <span class="float-left"><a href="/info">编辑信息</a></span>
+                        <span class="float-left">
+                            <router-link :to="{path: '/info'}">编辑信息</router-link>
+                        </span>
                         <span class="float-right">
                             <a href="javascript:void(0)"><i class="icon icon-share"></i></a>
                             <a href="javascript:void(0)"><i class="icon icon-chat-o"></i></a>
@@ -126,11 +128,11 @@
                             <i class="icon icon-minimize"></i>
                             <label class="popper">最小化</label>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link">
+                        <a href="javascript:void(0)" class="popper-link max-link">
                             <i class="icon icon-maximize"></i>
                             <label class="popper">最大化</label>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link">
+                        <a href="javascript:void(0)" class="popper-link close-link">
                             <i class="icon icon-close"></i>
                             <label class="popper">关闭</label>
                         </a>
@@ -185,100 +187,114 @@
                             </a>
                         </p>
                     </div>
-                    <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent" @keyup.enter="send"></textarea>
-                    <p class="text-right">
+                    <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent" ref="chatcontent"
+                    @keyup.enter="send" @keyup.alt.83="send" @keyup.shift.enter="changeLine"></textarea>
+                    <p class="commit-panel text-right">
                         <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
-                        </p>
+                        <label class="errmsg" v-show="errmsgShow">不能发送空白信息</label>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+
 export default {
-  name: 'Weixin',
-  mounted () {
-  },
-  data: function () {
-    return {
-      listclicked: false,
-      chatclicked: true,
-      collectclicked: false,
-      searchfocused: false,
-      chatcontent: '',
-      infoPopuped: false,
-      currentUser: {
-        id: 2,
-        name: 'Chen',
-        image: require('../assets/user.png')
-      },
-      contents: [
-        {
-          user: {
-            id: 1,
-            name: 'Richole',
-            image: require('../assets/user1.png')
-          },
-          message: '亲爱的，我下班了'
-        },
-        {
-          user: {
-            id: 2,
-            name: 'Chen',
-            image: require('../assets/user.png')
-          },
-          message: '好，吃饭了吗？'
-        },
-        {
-          user: {
-            id: 1,
-            name: 'Richole',
-            image: require('../assets/user1.png')
-          },
-          message: '吃了，你呢'
+    "name": 'Weixin',
+    mounted () {
+    },
+    "data": function () {
+        return {
+            "listclicked": false,
+            "chatclicked": true,
+            "collectclicked": false,
+            "searchfocused": false,
+            "chatcontent": '',
+            "errmsgShow": false,
+            "infoPopuped": false,
+            "currentUser": {
+                "id": 2,
+                "name": 'Chen',
+                "image": require('../assets/images/user.png')
+            },
+            "contents": [
+                {
+                    "user": {
+                        "id": 1,
+                        "name": 'Richole',
+                        "image": require('../assets/images/user1.png')
+                    },
+                    "message": '亲爱的，我下班了'
+                },
+                {
+                    "user": {
+                        "id": 2,
+                        "name": 'Chen',
+                        "image": require('../assets/images/user.png')
+                    },
+                    "message": '好，吃饭了吗？'
+                },
+                {
+                    "user": {
+                        "id": 1,
+                        "name": 'Richole',
+                        "image": require('../assets/images/user1.png')
+                    },
+                    "message": '吃了，你呢'
+                }
+            ]
         }
-      ]
-    }
-  },
-  methods: {
-    closeInfoPanel (event) {
-      var infoBox = this.$refs.userInfo
-      if (infoBox) {
-        if (!infoBox.contains(event.target)) {
-          this.infoPopuped = false
+    },
+    "methods": {
+        closeInfoPanel (event) {
+            var infoBox = this.$refs.userInfo
+            if (infoBox) {
+                if (!infoBox.contains(event.target)) {
+                    this.infoPopuped = false
+                }
+            }
+        },
+        active (el) {
+            switch (el) {
+            case 'chat':
+                this.listclicked = false
+                this.collectclicked = false
+                this.chatclicked = true
+                break
+            case 'list':
+                this.chatclicked = false
+                this.collectclicked = false
+                this.listclicked = true
+                break
+            case 'collect':
+                this.chatclicked = false
+                this.listclicked = false
+                this.collectclicked = true
+                break
+            }
+        },
+        openChatBox (user) {
+            console.log('打开某人的聊天窗口')
+        },
+        send () {
+            if (this.chatcontent.trim()) {
+                this.contents.push({
+                    "user": this.currentUser,
+                    "message": this.chatcontent
+                })
+                this.chatcontent = ''
+            } else {
+                this.errmsgShow = true
+                setTimeout(() => {
+                    this.errmsgShow = false
+                }, 2000)
+            }
+        },
+        changeLine () {
+            console.log('换行')
         }
-      }
-    },
-    active (el) {
-      switch (el) {
-        case 'chat':
-          this.listclicked = false
-          this.collectclicked = false
-          this.chatclicked = true
-          break
-        case 'list':
-          this.chatclicked = false
-          this.collectclicked = false
-          this.listclicked = true
-          break
-        case 'collect':
-          this.chatclicked = false
-          this.listclicked = false
-          this.collectclicked = true
-          break
-      }
-    },
-    openChatBox (user) {
-      console.log('打开某人的聊天窗口')
-    },
-    send () {
-      this.contents.push({
-        user: this.currentUser,
-        message: this.chatcontent
-      })
-      this.chatcontent = ''
     }
-  }
 }
 </script>
 <style lang="less" scoped>
@@ -574,21 +590,40 @@ export default {
         }
         .toolbar {
             text-align: right;
-            padding-top: 3px;
             box-sizing: border-box;
-            height: 20px;
+            height: 26px;
             .icon {
                 margin: 0 6px;
             }
             .icon-maximize {
                 font-size: 16px;
                 position: relative;
-                top: -1px;
+                top: 0px;
+                left: -3px;
+            }
+            .popper-link {
+                width: 33px;
+                height: 26px;
+                line-height: 26px;
+                &:hover {
+                    background-color: #e7e7e7;
+                }
+            }
+            .max-link {
+                position: relative;
+                top: -3px;
+                height: 27px;
+            }
+            .close-link:hover {
+                background-color: #c9302c;
+                .icon {
+                    color: #fff;
+                }
             }
         }
         .namebar {
-            height: 40px;
-            line-height: 40px;
+            height: 34px;
+            line-height: 34px;
             padding: 0 15px 0 30px;
             .name {
                 font-size: 22px;
@@ -688,6 +723,46 @@ export default {
             }
             .icon-liaotianjilu {
                 font-size: 17px;
+            }
+            .commit-panel {
+                position: relative;
+                .errmsg {
+                    font-size: 12px;
+                    color: #000;
+                    padding: 10px;
+                    position: absolute;
+                    right: -10px;
+                    bottom: 44px;
+                    background-color: #fff;
+                    border: solid 1px #ddd;
+                    box-shadow: 0px 2px 6px rgba(0,0,0,0.12), 0px 0px 1px rgba(0,0,0,0.24);
+                    border-radius: 3px;
+                    &::before {
+                        content: '';
+                        display: block;
+                        width: 0;
+                        height: 0;
+                        border: 0 solid transparent;
+                        border-top-color: #fff;
+                        border-width: 10px;
+                        position: absolute;
+                        right: 7px;
+                        bottom: -18px;
+                        z-index: 2;
+                    }
+                    &::after {
+                        content: '';
+                        display: block;
+                        width: 0;
+                        height: 0;
+                        border: 0 solid transparent;
+                        border-top-color: #ddd;
+                        border-width: 10px;
+                        position: absolute;
+                        right: 7px;
+                        bottom: -20px;
+                    }
+                }
             }
         }
     }

@@ -1,33 +1,102 @@
 <template>
     <div class="infomation-edit-page">
+        <router-link :to="{path: '/'}" class="back-text"><i class="icon icon-prev"></i>回首页</router-link>
+        <div class="image-pabel text-center">
+            <a href="javascript:void(0)">
+                <img :src="user.image" alt="user-img">
+            </a>
+        </div>
         <form>
-            <label for="user-name">姓名</label>
-            <input type="text" id="user-name" v-model="user.name"/>
-            <label for="user-sex">性别</label>
-            <input type="text" id="user-sex" v-model="user.sex"/>
-            <label for="user-address">所在地</label>
-            <input type="text" id="user-address" v-model="user.address"/>
+            <p>
+                <label for="user-name">昵称</label>
+                <input type="text" id="user-name" v-model="user.name"/>
+            </p>
+            <p>
+                <label for="user-sex">性别</label>
+                <input type="text" id="user-sex" v-model="user.sex"/>
+            </p>
+            <p>
+                <label for="user-address">所在地</label>
+                <input type="text" id="user-address" v-model="user.address"/>
+            </p>
+            <p class="text-center">
+                <a href="javascript:void(0)" class="btn btn-save" @click="save">保存</a>
+            </p>
         </form>
     </div>
 </template>
 <script>
 export default {
-  name: 'Infoedit',
-  data: function () {
-    return {
-      user: {
-        name: '',
-        sex: '男',
-        address: ''
-      }
+    "name": 'Infoedit',
+    "data": function () {
+        return {
+            "user": {
+                "name": 'ChenShuilian',
+                "sex": '男',
+                "address": '深圳福田',
+                "image": require('../assets/images/user.png')
+            }
+        }
+    },
+    "methods": {
+        save () {
+
+        }
     }
-  }
 }
 </script>
 <style lang="less" scoped>
     .infomation-edit-page {
         background-color: #fff;
-        
+        padding: 50px;
+        .back-text {
+            font-size: 16px;
+            display: inline-block;
+            padding: 5px;
+            background-color: #e57373;
+            border-radius: 3px;
+            color: #fff;
+            .icon-prev {
+                font-size: 16px;
+                margin-right: 5px;
+                color: #fff;
+            }
+        }
+        form {
+            width: 460px;
+            height: 440px;
+            margin: 0 auto;
+            margin-top: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            input {
+                width: 90%;
+                padding: 8px;
+                border: solid 1px #ccc;
+                border-radius: 3px;
+            }
+            p label {
+                margin-bottom: 5px;
+                display: block;
+            }
+        }
+        .image-pabel {
+            img {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+            }
+        }
+        .btn-save {
+            display: inline-block;
+            width: 60px;
+            padding: 10px;
+            border-radius: 3px;
+            background-color: #eee;
+            border: 1px solid #ddd;
+            color: inherit;
+        }
     }
 </style>
 
