@@ -7,6 +7,7 @@ npm run dev 打开页面，并打开页面控制台
 在页面控制台输入以下代码（在运行代码前，先瞄一眼当前项目的log文件夹，现在是不是只有一个demo.log）  
 #log文件夹是我提前帮你建好的  
 #----------------------------  
+```javascript
 var fs = require('fs')  
 var writeStream = fs.createWriteStream('./log/10001.log')  
 writeStream.write(JSON.stringify({  
@@ -24,6 +25,7 @@ writeStream.write(JSON.stringify({
   ]  
 }))  
 writeStream.end()  
+```
 #----------------------------  
 运行完后，你会惊呆的发现在你项目log文件夹，居然多了个10001.log文件  
 什么？？我居然可以在页面JS 生成了一个文件？？  
