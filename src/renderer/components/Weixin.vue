@@ -142,57 +142,59 @@
                         <a href="javascript:void(0)" class="more-link"><i class="icon icon-more"></i></a>
                     </p>
                 </div>
-                <div class="chat-content">
-                    <div class="content-box">
-                        <div v-for="(content, index) in contents" :key="index">
-                            <p class="text-left" v-if="content.user.id != currentUser.id">
-                                <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
-                                <span class="content content-left">{{content.message}}</span>
-                            </p>
-                            <p class="text-right" v-else>  
-                                <span class="content content-right">{{content.message}}</span>
-                                <span><img :src="currentUser.image" alt="user-img" class="user-img"></span>
-                            </p>
+                <div class="chat-body">
+                    <div class="chat-content" ref="chatcontentbox">
+                        <div class="content-box">
+                            <div v-for="(content, index) in contents" :key="index">
+                                <p class="text-left" v-if="content.user.id != currentUser.id">
+                                    <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
+                                    <span class="content content-left">{{content.message}}</span>
+                                </p>
+                                <p class="text-right" v-else>  
+                                    <span class="content content-right">{{content.message}}</span>
+                                    <span><img :src="currentUser.image" alt="user-img" class="user-img"></span>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="chat-send">
-                    <div class="toolbar">
-                        <p class="toolbar-left">
-                            <a href="javascript:void(0)" class="popper-link">
-                                <i class="icon icon-xiaolian"></i>
-                                <label class="popper">表情</label>
-                            </a>
-                            <a href="javascript:void(0)" class="popper-link">
-                                <i class="icon icon-wenjianjia"></i>
-                                <label class="popper">发送文件</label>
-                            </a>
-                            <a href="javascript:void(0)" class="popper-link">
-                                <i class="icon icon-jianqie"></i>
-                                <label class="popper">截图</label>
-                            </a>
-                            <a href="javascript:void(0)" class="popper-link liaotianjilu">
-                                <i class="icon icon-liaotianjilu"></i>
-                                <label class="popper">聊天记录</label>
-                            </a>
-                        </p>
-                        <p class="toolbar-right">
-                            <a href="javascript:void(0)" class="popper-link">
-                                <i class="icon icon-dianhua"></i>
-                                <label class="popper">语音聊天</label>
-                            </a>
-                            <a href="javascript:void(0)" class="popper-link">
-                                <i class="icon icon-shipin"></i>
-                                <label class="popper">视频聊天</label>
-                            </a>
+                    <div class="chat-send">
+                        <div class="toolbar">
+                            <p class="toolbar-left">
+                                <a href="javascript:void(0)" class="popper-link">
+                                    <i class="icon icon-xiaolian"></i>
+                                    <label class="popper">表情</label>
+                                </a>
+                                <a href="javascript:void(0)" class="popper-link">
+                                    <i class="icon icon-wenjianjia"></i>
+                                    <label class="popper">发送文件</label>
+                                </a>
+                                <a href="javascript:void(0)" class="popper-link">
+                                    <i class="icon icon-jianqie"></i>
+                                    <label class="popper">截图</label>
+                                </a>
+                                <a href="javascript:void(0)" class="popper-link liaotianjilu">
+                                    <i class="icon icon-liaotianjilu"></i>
+                                    <label class="popper">聊天记录</label>
+                                </a>
+                            </p>
+                            <p class="toolbar-right">
+                                <a href="javascript:void(0)" class="popper-link">
+                                    <i class="icon icon-dianhua"></i>
+                                    <label class="popper">语音聊天</label>
+                                </a>
+                                <a href="javascript:void(0)" class="popper-link">
+                                    <i class="icon icon-shipin"></i>
+                                    <label class="popper">视频聊天</label>
+                                </a>
+                            </p>
+                        </div>
+                        <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent" ref="chatcontent"
+                        @keyup.enter="send" @keyup.alt.83="send" @keyup.shift.enter="changeLine"></textarea>
+                        <p class="commit-panel text-right">
+                            <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
+                            <label class="errmsg" v-show="errmsgShow">不能发送空白信息</label>
                         </p>
                     </div>
-                    <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent" ref="chatcontent"
-                    @keyup.enter="send" @keyup.alt.83="send" @keyup.shift.enter="changeLine"></textarea>
-                    <p class="commit-panel text-right">
-                        <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
-                        <label class="errmsg" v-show="errmsgShow">不能发送空白信息</label>
-                    </p>
                 </div>
             </div>
         </div>
@@ -203,6 +205,10 @@
 export default {
     "name": 'Weixin',
     mounted () {
+        this.scrollToBottom()
+    },
+    updated () {
+        // this.scrollToBottom() //在发送框每每编辑一个字符都会触发该事件。所以正在输入字时，不滚动到最小面
     },
     "data": function () {
         return {
@@ -290,9 +296,16 @@ export default {
                     this.errmsgShow = false
                 }, 2000)
             }
+            this.scrollToBottom()
         },
         changeLine () {
             console.log('换行')
+        },
+        scrollToBottom () {
+            this.$nextTick(() => {
+                var container = this.$refs.chatcontentbox
+                container.scrollTop = container.scrollHeight
+            })
         }
     }
 }
@@ -303,8 +316,6 @@ export default {
         height: 100%;
         display: flex;
         align-content: center;
-        border-top: solid 1px #ccc;
-        border-bottom: solid 1px #ccc;
     }
     .popper-link {
         position: relative;
@@ -633,8 +644,34 @@ export default {
                 float: right;
             }
         }
+        .chat-body {
+            height: calc(100% - 61px);
+            position: relative;
+        }
         .chat-content {
             padding: 5px 30px 0;
+            height: 73.4%;
+            box-sizing: border-box;
+            overflow-y: scroll;
+
+            &:hover {
+                &::-webkit-scrollbar-thumb {
+                    background-color: #ccc;
+                }
+            }
+            &::-webkit-scrollbar {/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸，背景是滚动条整体部分*/
+                width: 6px;//这里是竖滚动条，所以宽起作用
+            }
+            &::-webkit-scrollbar-thumb {/*定义滚动条里面滚动的方块，可以拖动的那个*/
+                border-radius: 5px;
+                -moz-border-radius: 5px;
+                -webkit-border-radius: 5px;
+                background-color: transparent;
+            }
+            &::-webkit-scrollbar-track {/*定义滚动条的轨道（里面装有Thumb）*/
+                background-color: transparent
+            }
+
             p {
                 min-height: 60px;
                 margin-top: 20px;
@@ -689,6 +726,7 @@ export default {
             padding: 10px 30px;
             background-color: #fff;
             width: 100%;
+            height: 26.6%;
             box-sizing: border-box;
             .toolbar {
                 height: 30px;
