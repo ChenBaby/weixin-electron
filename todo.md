@@ -51,30 +51,161 @@ Todo（10分一道题）
 --BUG: 直接输入回车样式错乱，正常不能发送空字符串，详情查看bug0.jpg <!--已解决-->  
   
 面试题（4分一道题）  
-1.跨域请求有哪几种  
-2.盒子模型是什么  
+1.跨域请求有哪几种
+<!--
+第一种：JSONP，动态插入一个script标签请求跨域
+<script>
+function fn (res) {
+    ...响应数据
+}
+var _script = document.createElement('script')
+_script.type = 'text/javascript'
+_script.src = 'https://www.xxx.com/jsonp?callback=fn'
+document.head.appendChild(_script)
+</script>
+
+第二种
+后端人员在处理数据请求的时候，添加允许跨域请求的相关操作，如配置
+res.writeHead(200, {
+    "Content-Type": "text/html; charset=UTF-8",
+    "Access-Control-Allow-Origin":'http://localhost',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type'
+});
+
+第三种
+协议代理，需要跨域的请求不在浏览器发送执行，而是发到后台服务器，由后台服务器去执行这个跨域请求，再把得到的数据响应给回前端，这样的过程。
+
+-->
+2.盒子模型是什么
+<!--
+在前端页面显示中，一个元素由几大部分组成，由content(元素内容)、paddding(内边距)、border(边框)、margin(外边距)组成的部分称之为CSS中元素的盒子模型。
+-->
 3.cookie的设置、修改、删除，以及设置expire  
-4.http 头部中content-type有哪些常用类型  
-5.http 有哪些方法  
-6.http和https的差别  
-7.同步和异步的区别  
-8.用原生实现一个ajax请求  
-9.var a = [3,4,5,6,7,8,9,0,1,2,3], a怎么排序以及倒序  
+<!--
+cookie是有js生成
+document.cookie(name,value,expires) //设置（expires过期时间要是为天数，需转换成有效地区日期时间）
+document.cookie(name,newValue,expires) //修改，会覆盖原来相同名字的cookie的值
+document.cookie(name,'',1970/01/01) //删除,cookie值为空，以及设置过期时间为初始值即可删除
+
+不设置expires过期时间，则仅在浏览器关闭前有效
+
+参数天数，转换成有效地区日期时间
+var formatExpires = function (day) {
+    var date = new Date()
+    date.setTime(date.getTime() + (day * 24 * 60 * 60 * 1000))
+    return 'expires=' + date.toGMTString() 
+}
+-->
+4.http 头部中content-type有哪些常用类型
+<!--
+Content-Type来表示具体请求中的媒体类型信息。
+Content-Type: [type]/[subtype]; parameter
+例如： Content-Type: text/html;charset:utf-8;
+
+application/xhtml+xml ：XHTML格式
+application/xml     ： XML数据格式
+application/atom+xml  ：Atom XML聚合格式    
+application/json    ： JSON数据格式
+application/pdf       ：pdf格式  
+application/msword  ： Word文档格式
+application/octet-stream ： 二进制流数据（如常见的文件下载）
+
+application/x-www-form-urlencoded ： <form encType=””>中默认的encType，form表单数据被编码为         key/value格式发送到服务器（表单默认的提交数据的格式）
+默认的。如果不指定content-type，默认使用此格式。
+
+参数格式：key1=value1&key2=value2
+
+
+text/html ： HTML格式
+text/plain ：纯文本格式
+text/xml ：  XML格式
+
+image/gif ：gif图片格式
+image/jpeg ：jpg图片格式
+image/png：png图片格式
+
+multipart/form-data ： 需要在表单中进行文件上传时，就需要使用该格式
+-->
+5.http 有哪些方法
+<!--
+GET获取资源
+POST传输实体文本
+PUT传输文件
+DELETE删除文件
+OPTIONS询问支持的方法
+-->
+
+
+7.同步和异步的区别
+<!--
+同步是指进程在处理一个ajax请求的时候，会阻塞进程，在请求发送后，不会往下执行下面的操作。而是一直等，等到该请求返回数据得到响应时，才继续往下解析，继续进程。异步则不是阻塞模式，在处理请求时，发送完不等待，继续往下执行其他解析操作，不影响进程的进行，等到请求有了响应数据系统会通知进行相关处理。
+-->
+
+8.用原生实现一个ajax请求
+<!--
+if (window.XMLHttpRequest) {
+var xmlhttp = new XMLHttpRequest()
+} else {
+var xmlhttp = new ActiveXOject(Microsoft.XMLHttpRequest)
+}
+xmlhttp.open(method, url, async)
+
+// xmlhttp.setRequestHeader('Content-type','application/json')
+xmlhttp.send(JSON.stringify(data))
+
+xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState === 4) {
+        if (xmlhttp.status === 200) {
+            console.log(xmlhttp.responseText)
+        }
+    }
+}
+
+-->
+9.var a = [3,4,5,6,7,8,9,0,1,2,3], a怎么排序以及倒序
+<!--
+a.sort()数组会按照字符的Unicode进行排序（把数组里面当成字符串处理）
+arr.sort((a, b) => {
+    return a - b //数值从小到大排序
+    return b - a //数值从大到小排序
+})
+a.reverse()倒序
+-->
 10.var a = [3,4,5,6,7,8,9,0,1,2,3], 过滤数组中大于5的元素  
-11.Flex-shrink有什么作用  
-12.块级格式化上下文是什么  
-13.怎么对a标签设置高度  
+<!-- 
+a.filter((item) => {
+ return item > 5
+})
+-->
+
+11.怎么对a标签设置高度
+<!-- 
+a {
+    display: inline-block/block;
+    height: ...
+}
+ -->
+
+#----------------------------------面试题未完成--------------------------------------
+
+6.http和https的差别
+12.Flex-shrink有什么作用
+13.块级格式化上下文是什么  
 14.Vue的生命周期函数有哪些  
-15.图片base64 相比 URL加载有哪些优势  
+15.图片base64 相比 URL加载有哪些优势
+
 #----------------------------- 华丽的分割线 -----------------------------  
 # 2018-11-07 任务  
 --Shift enter 我之前没用过，明天我试一下  
 #  
---BUG：连续发送很多条消息，后面的消息不显示了，要出现滚动条  
---通过css优化滚动条样式，让他好看点  
---BUG .main-box为什么要有border，很不美观 详情参考bug2.jpg  
+<!-- --BUG：连续发送很多条消息，后面的消息不显示了，要出现滚动条
+通过css优化滚动条样式，让他好看点   -->
+<!-- --BUG .main-box为什么要有border，很不美观 详情参考bug2.jpg   -->
+<!-- --BUG 默认字体使用 "Microsoft YaHei", "arial"，现在字体很难看，在我mac这里   -->
+
+# 2018-11-07 未完成的任务
 --BUG 详情参考bug1.jpg，随软件缩小，最左边选项栏宽度不变，搜一下官方文档，看看窗口有没有最小宽度，不让用户把软件缩到很小  
---BUG 默认字体使用 "Microsoft YaHei", "arial"，现在字体很难看，在我mac这里  
 --明日联调登陆注册，改完上述问题之后，找我联调  
 --Important 做页面的时候时刻想现在页面好不好看，以及开发同时多点自测功能，发现BUG，以后如果测试测出一大堆页面问题或体验问题，就很尴尬了  
   
