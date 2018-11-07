@@ -32,13 +32,25 @@ export default {
             }
         }
     },
+    "mounted": function () {
+        if (localStorage.getItem('isLogged')) {
+            this.$router.push({
+                "path": '/weixin'
+            })
+        }
+    },
     "methods": {
         signIn () {
             this.$store.dispatch('user/signIn', {
                 ...this.user
             })
                 .then(res => {
-
+                    console.log(res.data.message)
+                    if (res.success) {
+                        this.$router.push({
+                            "path": '/weixin'
+                        })
+                    }
                 })
                 .catch(err => {
                     console.log(err)

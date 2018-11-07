@@ -6,7 +6,7 @@
             <form>
                 <p>
                     <label for="name">昵称</label>
-                    <input type="text" id="name" v-model="user.username">
+                    <input type="text" id="name" v-model="user.name">
                 </p>
                 <p>
                     <label for="email">邮箱</label>
@@ -18,7 +18,7 @@
                 </p>
                 <p class="text-center">
                     <a href="javascript:void(0)" class="btn btn-regist" @click="signUp">注册</a>
-                    <router-link :to="{path: '/login'}" class="regist-link">已有账户？登录</router-link>
+                    <router-link :to="{path: '/'}" class="regist-link">已有账户？登录</router-link>
                 </p>
             </form>
         </div>
@@ -39,11 +39,17 @@ export default {
     },
     "methods": {
         signUp () {
+            console.log(this.user)
             this.$store.dispatch('user/signUp', {
                 ...this.user
             })
                 .then(res => {
-                    console.log(res)
+                    console.log(res.data.message)
+                    if (res.success) {
+                        this.$router.push({
+                            "path": '/'
+                        })
+                    }
                 })
                 .catch(error => {
                     console.log(error)

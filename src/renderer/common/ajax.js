@@ -1,6 +1,6 @@
 import axios from 'axios'
 var options = {
-    'baseURL': 'http://35.200.61.173:7001',
+    'baseURL': 'https://richole.cn',
     'withCredentials': true
 }
 var _ajax = axios.create(options)
@@ -9,16 +9,18 @@ var ajax = {
     get (url, data) {
         let config = {
             "params": {
-                ...data
+                ...data,
+                "ck": encodeURIComponent(localStorage.getItem('ck') || '')
             }
         }
-        _ajax.get(url, config)
+        return _ajax.get(url, config).then(res => { return res.data })
     },
     post (url, data) {
         let config = {
-            ...data
+            ...data,
+            "ck": encodeURIComponent(localStorage.getItem('ck') || '')
         }
-        _ajax.send(url, config)
+        return _ajax.post(url, config).then(res => { return res.data })
     }
 }
 

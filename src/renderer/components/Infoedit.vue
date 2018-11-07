@@ -1,6 +1,6 @@
 <template>
     <div class="infomation-edit-page">
-        <router-link :to="{path: '/'}" class="back-text"><i class="icon icon-prev"></i>回首页</router-link>
+        <router-link :to="{path: '/weixin'}" class="back-text"><i class="icon icon-prev"></i>返回</router-link>
         <div class="image-pabel text-center">
             <a href="javascript:void(0)">
                 <img :src="user.image" alt="user-img">

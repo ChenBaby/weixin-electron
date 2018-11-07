@@ -42,7 +42,7 @@
                     </ul>
                 </div>
                 <div class="navbar-bottom">
-                    <a href="javascript:void(0)" class="popper-link setting-link">
+                    <a href="javascript:void(0)" class="popper-link setting-link" @mouseenter="settingPopuped = true" @mouseout="settingPopuped = false">
                         <i class="icon icon-setting"></i>
                         <label class="popper">更多</label>
                     </a>
@@ -50,7 +50,7 @@
                 <div class="info-popup" :class="{show: infoPopuped}" ref="userInfo">
                     <div class="popup-head">
                         <div class="name-box text-left">
-                            <span>{{currentUser.name}}<i class="icon icon-girl"></i></span>
+                            <span>{{this.$store.state.user.username}}<i class="icon icon-girl"></i></span>
                             <span><label>微信号:</label>{{currentUser.id}}</span>
                         </div>
                         <div class="img-box">
@@ -72,6 +72,12 @@
                             <a href="javascript:void(0)"><i class="icon icon-chat-o"></i></a>
                         </span>
                     </p>
+                </div>
+                <div class="setting-popup" v-show="settingPopuped" ref="">
+                    <ul>
+                        <li><a href="javascript:void(0)">关于</a></li>
+                        <li><a href="javascript:void(0)">退出登录</a></li>
+                    </ul>
                 </div>
             </div>
             <div class="contact-box">
@@ -219,9 +225,10 @@ export default {
             "chatcontent": '',
             "errmsgShow": false,
             "infoPopuped": false,
+            "settingPopuped": false,
             "currentUser": {
                 "id": 2,
-                "name": 'Chen',
+                "name": this.$store.state.user.username,
                 "image": require('../assets/images/user.png')
             },
             "contents": [
@@ -308,6 +315,11 @@ export default {
             })
         }
     }
+    // "computed": {
+    //     username () {
+    //         return this.$store.state.username
+    //     }
+    // }
 }
 </script>
 <style lang="less" scoped>
@@ -316,6 +328,7 @@ export default {
         height: 100%;
         display: flex;
         align-content: center;
+        position: relative;
     }
     .popper-link {
         position: relative;
@@ -342,7 +355,7 @@ export default {
     .navbar {
         background-color:#28282b;
         color: #fff;
-        width: 6%;
+        width: 60px;
         height: 100%;
         position: relative;
         text-align: center;
@@ -463,9 +476,21 @@ export default {
             }
 
         }
+        .setting-popup {
+            width: 100px;
+            position: absolute;
+            left: 60px;
+            bottom: 30px;
+            background-color: rgba(0,0,0,0.75);
+            li {
+                margin-top: 0;
+                height: 40px;
+                line-height: 40px;
+            }
+        }
     }
     .contact-box {
-        width: 31%;
+        width: 280px;
         height: 100%;
         background-color: #EDEAE8;
         .contact-header {
@@ -586,7 +611,7 @@ export default {
         }
     }
     .chat-box {
-        width: 63%;
+        width: calc(100% - 340px);
         height: 100%;
         background: #F5F5F5;
         position: relative;

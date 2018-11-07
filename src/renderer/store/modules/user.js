@@ -1,20 +1,25 @@
 import ajax from '@/common/ajax.js'
 const state = {
-    "user": {},
+    "username": '',
     "isLogged": false
 }
 
 const mutations = {
-    setGlobalUser (state, data) {
-        if (JSON.stringify(data) === '{}') {
-            state.user = {}
-            state.isLogged = false
-            // localStorage.setItem('isLogged', false)
-            // localStorage.setItem('user', '{}')
-        } else {
-            state.user = {...data}
+    setUsername (state, name) {
+        if (name) {
+            state.username = name
             state.isLogged = true
+            localStorage.setItem('isLogged', true)
+            localStorage.setItem('username', name)
+        } else {
+            state.username = null
+            state.isLogged = false
+            localStorage.setItem('isLogged', false)
+            localStorage.setItem('username', '')
         }
+    },
+    setCK (state, data) {
+        localStorage.setItem('ck', data)
     }
 }
 
@@ -23,16 +28,20 @@ const actions = {
         return ajax.get('/user')
     },
     signIn ({commit}, data) {
-        return ajax.get('/user/login', data).then((res) => {
-            commit.setGlobalUser(res.data)
+        return ajax.post('/chat/user/sign_in', data).then((res) => {
+            if (res.success) {
+                console.log(res.data.message)
+                commit('setUsername', res.data.name)
+                commit('setCK', res.data.ck)
+            }
             return res
         })
     },
-    signUp (data) {
-        return ajax.post('/user/signup', data)
+    signUp (store, data) {
+        return ajax.post('/chat/user/sign_up', data)
     },
     signOut () {
-        return ajax.post('/user/signout')
+        return ajax.post('/chat/user/sign_out')
     }
 }
 

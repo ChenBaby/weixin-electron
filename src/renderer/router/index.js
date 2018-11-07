@@ -4,15 +4,15 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-    "mode": 'history',
+    // "mode": 'history',
     "routes": [
-        // {
-        //     "path": '/',
-        //     "name": 'Login',
-        //     "component": require('@/components/Login').default
-        // },
         {
             "path": '/',
+            "name": 'Login',
+            "component": require('@/components/Login').default
+        },
+        {
+            "path": '/weixin',
             "name": 'Weixin',
             "component": require('@/components/Weixin').default
         },
