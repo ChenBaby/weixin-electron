@@ -728,6 +728,8 @@ export default {
             width: 100%;
             height: 26.6%;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
             .toolbar {
                 height: 30px;
                 display: flex;
