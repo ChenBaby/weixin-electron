@@ -1,11 +1,11 @@
 <template>
-    <div class="wechat-page" @click="closeInfoPanel">
+    <div class="wechat-page" @click="closePopupPanel">
         <div class="main-box">
             <div class="navbar">
                 <div class="navbar-top">
                     <ul>
                         <li>
-                            <a href="javascript:void(0)" @click.stop="infoPopuped = true">
+                            <a href="javascript:void(0)" @click.stop="infoPopuped = true;settingPopuped = false;">
                                 <img :src="currentUser.image" alt="user-img">
                             </a>
                         </li>
@@ -45,12 +45,12 @@
                     </ul>
                 </div>
                 <div class="navbar-bottom">
-                    <a href="javascript:void(0)" class="popper-link setting-link" @mouseenter="settingPopuped = true" @mouseout="settingPopuped = false">
+                    <a href="javascript:void(0)" class="popper-link setting-link" @click.stop="settingPopuped = true;infoPopuped = false;">
                         <i class="icon icon-setting"></i>
                         <label class="popper">更多</label>
                     </a>
                 </div>
-                <div class="info-popup" :class="{show: infoPopuped}" ref="userInfo">
+                <div class="info-popup" v-show="infoPopuped" ref="userInfo">
                     <div class="popup-head">
                         <div class="name-box text-left">
                             <span>{{this.$store.state.user.username}}<i class="icon icon-girl"></i></span>
@@ -76,10 +76,10 @@
                         </span>
                     </p>
                 </div>
-                <div class="setting-popup" v-show="settingPopuped" ref="">
+                <div class="setting-popup" v-show="settingPopuped" ref="setting">
                     <ul>
                         <li><a href="javascript:void(0)">关于</a></li>
-                        <li><a href="javascript:void(0)">退出登录</a></li>
+                        <li><a href="javascript:void(0)" @click="logout">退出登录</a></li>
                     </ul>
                 </div>
             </div>
@@ -263,8 +263,9 @@ export default {
         }
     },
     "methods": {
-        closeInfoPanel (event) {
+        closePopupPanel (event) {
             var infoBox = this.$refs.userInfo
+            var settingBox = this.$refs.setting
             if (infoBox) {
                 if (!infoBox.contains(event.target)) {
                     this.infoPopuped = false
@@ -272,6 +273,11 @@ export default {
             }
             // mustFixed 关闭打开基本信息弹窗 这样写得不好，我暂时也没想到好方法，不过要换种写法
             // 基本信息弹窗样式效果不好，仔细看微信的样式怎么实现
+            if (settingBox) {
+                if (!settingBox.contains(event.target)) {
+                    this.settingPopuped = false
+                }
+            }
         },
         active (el) {
             // mustFixed 这个写法有点挫
@@ -318,6 +324,18 @@ export default {
             this.$nextTick(() => {
                 var container = this.$refs.chatcontentbox
                 container.scrollTop = container.scrollHeight
+            })
+        },
+        logout () {
+            this.$store.dispatch('user/signOut').then(res => {
+                console.log(res)
+                if (res.success) {
+                    this.$router.push({
+                        "path": '/'
+                    })
+                }
+            }).catch(error => {
+                console.log(error)
             })
         }
     }
@@ -409,10 +427,6 @@ export default {
             padding: 24px;
             box-sizing: border-box;
             z-index: 100;
-            display: none;
-            &.show {
-                display: block;
-            }
             .popup-head {
                 display: flex;
                 align-items: center;
