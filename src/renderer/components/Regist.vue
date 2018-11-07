@@ -7,14 +7,17 @@
                 <p>
                     <label for="name">昵称</label>
                     <input type="text" id="name" v-model="user.name">
+                    <!-- mustFixed id在这里没有作用，如果要修改样式请用class -->
                 </p>
                 <p>
                     <label for="email">邮箱</label>
                     <input type="text" id="email" v-model="user.email">
+                    <!-- mustFixed id在这里没有作用，如果要修改样式请用class -->
                 </p>
                 <p>
                     <label for="password">密码</label>
                     <input type="password" id="password" v-model="user.password">
+                    <!-- mustFixed id在这里没有作用，如果要修改样式请用class -->
                 </p>
                 <p class="text-center">
                     <a href="javascript:void(0)" class="btn btn-regist" @click="signUp">注册</a>
@@ -28,6 +31,7 @@
 <script>
 export default {
     "name": 'regist',
+    // mustFixed data () {} 上面的name去掉
     "data": function () {
         return {
             "user": {
@@ -54,6 +58,7 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+                // mustFixed 错误提示在ajax.js封装一下，只要服务端传回success false，默认显示通用报错 alert 出来 message
         }
     }
 }

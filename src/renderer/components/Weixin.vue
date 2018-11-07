@@ -18,6 +18,7 @@
                                 <i class="icon icon-chat"></i>
                                 <label class="popper">聊天</label>
                             </a>
+                            <!-- mustFixed HTML太冗余 JS也过于冗余必须优化 -->
                         </li>
                         <li>
                             <a href="javascript:void(0)" class="popper-link" v-show="!listclicked" @click="active('list')">
@@ -28,6 +29,7 @@
                                 <i class="icon icon-user-list"></i>
                                 <label class="popper">通讯录</label>
                             </a>
+                            <!-- mustFixed HTML太冗余 JS也过于冗余必须优化 -->
                         </li>
                         <li>
                             <a href="javascript:void(0)" class="popper-link" v-show="!collectclicked" @click="active('collect')">
@@ -38,6 +40,7 @@
                                 <i class="icon icon-collect"></i>
                                 <label class="popper">收藏</label>
                             </a>
+                            <!-- mustFixed HTML太冗余 JS也过于冗余必须优化 -->
                         </li>
                     </ul>
                 </div>
@@ -267,8 +270,11 @@ export default {
                     this.infoPopuped = false
                 }
             }
+            // mustFixed 关闭打开基本信息弹窗 这样写得不好，我暂时也没想到好方法，不过要换种写法
+            // 基本信息弹窗样式效果不好，仔细看微信的样式怎么实现
         },
         active (el) {
+            // mustFixed 这个写法有点挫
             switch (el) {
             case 'chat':
                 this.listclicked = false

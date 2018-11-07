@@ -7,10 +7,12 @@
                 <p>
                     <label for="name">邮箱名</label>
                     <input type="text" id="name" v-model="user.email">
+                    <!-- mustFixed id 去掉 -->
                 </p>
                 <p>
                     <label for="password">密码</label>
                     <input type="password" id="password" v-model="user.password">
+                    <!-- mustFixed id 去掉 -->
                 </p>
                 <p class="text-center">
                     <a href="javascript:void(0)" class="btn btn-login" @click="signIn">登录</a>
@@ -24,6 +26,7 @@
 <script>
 export default {
     "name": 'Login',
+    // mustFixed name 去掉
     "data": function () {
         return {
             "user": {
@@ -55,6 +58,7 @@ export default {
                 .catch(err => {
                     console.log(err)
                 })
+                // mustFixed 错误提示在ajax.js封装一下，只要服务端传回success false，默认显示通用报错 alert 出来 message
         }
     }
 }

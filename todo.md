@@ -212,6 +212,33 @@ a {
 复盘上面面试题  
 不会->先谷歌自行了解->有疑问->再问我  
 #----------------------------- 华丽的分割线 -----------------------------  
+
+# 2018-11-07 昨日问题回顾
+```javascript
+document.cookie(name,value,expires) //设置（expires过期时间要是为天数，需转换成有效地区日期时间）
+document.cookie('name', '1')
+VM1736:2 Uncaught TypeError: document.cookie is not a function
+    at <anonymous>:2:10
+```
+你真的有自己试过吗。。。
+
+# 2018-11-08 任务
+1.css优化滚动条样式（网上搜一下）  
+2.keyup 和 keydown 和 keypress的区别  
+3.event.stopPropagation() 和 event.preventDefault() 有什么作用  
+4.event.altKey 和 event.shiftKey有什么作用  
+5.发送消息不能有个回车的动画  
+6.shift+enter要换行  
+7.全局搜索：mustFixed 注释，修改我要你修改的点  
+
+面试题  
+6.http和https的差别  
+12.Flex-shrink有什么作用  
+13.块级格式化上下文是什么  
+14.Vue的生命周期函数有哪些  
+15.图片base64 相比 URL加载有哪些优势  
+3.cookie的设置、修改、删除，以及设置expire  （我要可以直接执行的，直接可以用的）  
+#----------------------------- 华丽的分割线 -----------------------------  
 <!--   
 # 未来可接受任务  
 Todo（Websocket联调）  
