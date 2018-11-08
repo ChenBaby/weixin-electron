@@ -84,9 +84,11 @@ res.writeHead(200, {
 3.cookie的设置、修改、删除，以及设置expire  
 <!--
 cookie是有js生成
+--------------错的-----------------
 document.cookie(name,value,expires) //设置（expires过期时间要是为天数，需转换成有效地区日期时间）
 document.cookie(name,newValue,expires) //修改，会覆盖原来相同名字的cookie的值
 document.cookie(name,'',1970/01/01) //删除,cookie值为空，以及设置过期时间为初始值即可删除
+--------------错的-----------------
 
 不设置expires过期时间，则仅在浏览器关闭前有效
 
@@ -221,15 +223,53 @@ VM1736:2 Uncaught TypeError: document.cookie is not a function
     at <anonymous>:2:10
 ```
 你真的有自己试过吗。。。
+#------------------------------更正-----------------------------------------
+javascript中cookie的设置、更改、删除
+document.cookie = "encodeURIComponent(name)=encodeURIComponent(value); expires=expiresdate" // 设置cookie
+
+document.cookie = "encodeURIComponent(name)=encodeURIComponent(newValue); expires=newExpiresdate" //直接覆盖更改
+
+document.cookie = "name=; expires= 01 Jan 1970 00:00:00 GMT" //删除时不必指定 cookie 的值。
+
+
 
 # 2018-11-08 任务
-1.css优化滚动条样式（网上搜一下）  
+1.css优化滚动条样式（网上搜一下）
+<!-- 滚动条样式没改 -->
 2.keyup 和 keydown 和 keypress的区别  
+<!-- 
+keyup: 释放按键
+keydown: 按下按键的时候触发
+keypress: 按下按键或者释放按键的时候触发
+ -->
 3.event.stopPropagation() 和 event.preventDefault() 有什么作用  
+<!-- 
+event.stopPropagation()阻止冒泡
+event.preventDefault()阻止元素本身的事件
+ -->
+
 4.event.altKey 和 event.shiftKey有什么作用  
+<!-- 在事件里面获取判断是否按下了alt键或者shift键
+event.altKey:true 是按下alt键
+event.altKey:false 否按下alt键
+event.shiftKey:true 是按下shift键
+event.shiftKey:false 否按下shift键 -->
+
 5.发送消息不能有个回车的动画  
+<!-- 
+在keydown事件里面判断回车(event.keyCode === 13)，阻止绑定在元素本身的事件发生event.preventDefault
+ -->
 6.shift+enter要换行  
+<!-- 
+在keydown事件里面判断回车加shift按键(event.keyCode === 13 && event.shiftKey)，实现换行
+ -->
+
 7.全局搜索：mustFixed 注释，修改我要你修改的点  
+<!-- 
+还有一个没改：
+// mustFixed 关闭打开基本信息弹窗 这样写得不好，我暂时也没想到好方法，不过要换种写法
+// 基本信息弹窗样式效果不好，仔细看微信的样式怎么实现
+ -->
 
 面试题  
 6.http和https的差别  
