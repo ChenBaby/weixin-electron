@@ -8,19 +8,16 @@
         </div>
         <form>
             <p>
-                <label for="user-name">昵称</label>
-                <input type="text" id="user-name" v-model="user.name"/>
-                <!-- mustFixed id 去掉 -->
+                <label>昵称</label>
+                <input type="text" v-model="user.name"/>
             </p>
             <p>
-                <label for="user-sex">性别</label>
-                <input type="text" id="user-sex" v-model="user.sex"/>
-                <!-- mustFixed id 去掉 -->
+                <label>性别</label>
+                <input type="text" v-model="user.sex"/>
             </p>
             <p>
-                <label for="user-address">所在地</label>
-                <input type="text" id="user-address" v-model="user.address"/>
-                <!-- mustFixed id 去掉 -->
+                <label>所在地</label>
+                <input type="text" v-model="user.address"/>
             </p>
             <p class="text-center">
                 <a href="javascript:void(0)" class="btn btn-save" @click="save">保存</a>
@@ -30,9 +27,7 @@
 </template>
 <script>
 export default {
-    "name": 'Infoedit',
-    // mustFixed name 去掉，data () {}
-    "data": function () {
+    "data" () {
         return {
             "user": {
                 "name": 'ChenShuilian',

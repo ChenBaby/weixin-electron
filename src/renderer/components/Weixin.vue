@@ -3,44 +3,44 @@
         <div class="main-box">
             <div class="navbar">
                 <div class="navbar-top">
-                    <ul>
+                    <ul class="navbar-list">
                         <li>
                             <a href="javascript:void(0)" @click.stop="infoPopuped = true;settingPopuped = false;">
                                 <img :src="currentUser.image" alt="user-img">
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link" v-show="!chatclicked" @click="active('chat')">
+                            <a href="javascript:void(0)" class="popper-link chat-o-link" v-show="!chatclicked" 
+                            @click="chatclicked=true;listclicked=false;collectclicked=false;">
                                 <i class="icon icon-chat-o"></i>
                                 <label class="popper">聊天</label>
                             </a>
-                            <a href="javascript:void(0)" class="popper-link" v-show="chatclicked">
+                            <a href="javascript:void(0)" class="popper-link chat-link" v-show="chatclicked">
                                 <i class="icon icon-chat"></i>
                                 <label class="popper">聊天</label>
                             </a>
-                            <!-- mustFixed HTML太冗余 JS也过于冗余必须优化 -->
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link" v-show="!listclicked" @click="active('list')">
+                            <a href="javascript:void(0)" class="popper-link user-list-o-link" v-show="!listclicked" 
+                            @click="listclicked=true;chatclicked=false;collectclicked=false;">
                                 <i class="icon icon-user-list-o"></i>
                                 <label class="popper">通讯录</label>
                             </a>
-                            <a href="javascript:void(0)" class="popper-link" v-show="listclicked">
+                            <a href="javascript:void(0)" class="popper-link user-list-link" v-show="listclicked">
                                 <i class="icon icon-user-list"></i>
                                 <label class="popper">通讯录</label>
                             </a>
-                            <!-- mustFixed HTML太冗余 JS也过于冗余必须优化 -->
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link" v-show="!collectclicked" @click="active('collect')">
+                            <a href="javascript:void(0)" class="popper-link collect-o-link" v-show="!collectclicked" 
+                            @click="collectclicked=true;listclicked=false;chatclicked=false">
                                 <i class="icon icon-collect-o"></i>
                                 <label class="popper">收藏</label>
                             </a>
-                            <a href="javascript:void(0)" class="popper-link" v-show="collectclicked">
+                            <a href="javascript:void(0)" class="popper-link collect-link" v-show="collectclicked">
                                 <i class="icon icon-collect"></i>
                                 <label class="popper">收藏</label>
                             </a>
-                            <!-- mustFixed HTML太冗余 JS也过于冗余必须优化 -->
                         </li>
                     </ul>
                 </div>
@@ -224,7 +224,7 @@
                         </div>
                         <textarea name="chatcontent" id="chatcontent" rows="5" 
                         v-model="chatcontent" ref="chatcontent" v-focus="textareafocused"
-                        @keyup.enter="send" @keyup.alt.83="send" @keyup.shift.enter="changeLine"></textarea>
+                         @keydown="keyDown"></textarea>
                         <p class="commit-panel text-right">
                             <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
                             <label class="errmsg" v-show="errmsgShow">不能发送空白信息</label>
@@ -238,7 +238,6 @@
 <script>
 
 export default {
-    "name": 'Weixin',
     mounted () {
         this.scrollToBottom()
     },
@@ -306,30 +305,21 @@ export default {
                 }
             }
         },
-        active (el) {
-            // mustFixed 这个写法有点挫
-            switch (el) {
-            case 'chat':
-                this.listclicked = false
-                this.collectclicked = false
-                this.chatclicked = true
-                break
-            case 'list':
-                this.chatclicked = false
-                this.collectclicked = false
-                this.listclicked = true
-                break
-            case 'collect':
-                this.chatclicked = false
-                this.listclicked = false
-                this.collectclicked = true
-                break
-            }
-        },
         openChatBox (user) {
             console.log('打开某人的聊天窗口')
         },
-        send () {
+        keyDown () {
+            console.log(event.keyCode, event.altKey)
+            if (event.keyCode === 13 && event.shiftKey) {
+                this.chatcontent += '\n'
+            } else if (event.keyCode === 13) {
+                event.preventDefault()
+                this.send()
+            } else if (event.keyCode === 83 && event.altKey) {
+                this.send()
+            }
+        },
+        send (event) {
             if (this.chatcontent.trim()) {
                 this.contents.push({
                     "user": this.currentUser,
@@ -343,9 +333,6 @@ export default {
                 }, 2000)
             }
             this.scrollToBottom()
-        },
-        changeLine () {
-            console.log('换行')
         },
         scrollToBottom () {
             this.$nextTick(() => {
@@ -777,17 +764,8 @@ export default {
                     background-color: #ccc;
                 }
             }
-            &::-webkit-scrollbar {/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸，背景是滚动条整体部分*/
-                width: 6px;//这里是竖滚动条，所以宽起作用
-            }
-            &::-webkit-scrollbar-thumb {/*定义滚动条里面滚动的方块，可以拖动的那个*/
-                border-radius: 5px;
-                -moz-border-radius: 5px;
-                -webkit-border-radius: 5px;
+            &::-webkit-scrollbar-thumb {
                 background-color: transparent;
-            }
-            &::-webkit-scrollbar-track {/*定义滚动条的轨道（里面装有Thumb）*/
-                background-color: transparent
             }
 
             p {

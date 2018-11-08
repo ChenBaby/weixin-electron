@@ -6,13 +6,12 @@
 
 <script>
   export default {
-    name: 'weixin-electron'
-    // mustFixed name 去掉，不用设置也可以
   }
 </script>
 
 <style>
     @import '~@/assets/css/customized.less';
+    @import '~@/assets/css/scrollbar.less';
   /* CSS */
   #app {
       height: 100%;
