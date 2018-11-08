@@ -13,14 +13,30 @@ var ajax = {
                 "ck": encodeURIComponent(localStorage.getItem('ck') || '')
             }
         }
-        return _ajax.get(url, config).then(res => { return res.data })
+        return _ajax.get(url, config)
+            .then(res => {
+                return res.data
+            })
+            .catch(err => {
+                return err
+            })
     },
     post (url, data) {
         let config = {
             ...data,
             "ck": encodeURIComponent(localStorage.getItem('ck') || '')
         }
-        return _ajax.post(url, config).then(res => { return res.data })
+        return _ajax.post(url, config)
+            .then(res => {
+                if (res.data.success) {
+                    return res.data
+                } else {
+                    return Promise.reject(new Error(res.data.message))
+                }
+            })
+            .catch(err => {
+                return Promise.reject(new Error(err.message))
+            })
     }
 }
 
