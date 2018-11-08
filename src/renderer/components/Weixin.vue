@@ -87,14 +87,39 @@
                 <div class="contact-header">
                     <span class="contact-search" :class="{'input-focus': searchfocused}">
                         <label class="icon-label"><i class="icon icon-search"></i></label>
-                        <input type="text" placeholder="搜索" @focus="searchfocused = true" @blur="searchfocused = false">
-                        <label class="close-label" v-show="searchfocused" @click="searchfocused = false"><i class="icon icon-close"></i></label>
+                        <input type="text" placeholder="搜索" @focus="searchfocused = true;textareafocused=false" @blur="searchfocused = false;textareafocused=true">
+                        <label class="close-label" :class="{show: searchfocused}" @click="searchfocused = false"><i class="icon icon-close"></i></label>
                     </span>
                     <a href="javascript:void(0)" class="contact-plus">
                         <i class="icon icon-plus"></i>
                     </a>
                 </div>
-                <div class="contact-list">
+                <div class="search-list list" v-if="searchfocused">
+                    <div class="search-header">
+                        <label>更多</label>
+                    </div>
+                    <ul>
+                        <li>
+                            <div class="li-img li-icon-search">
+                                <a href="javascript:void(0)"><i class="icon icon-search-right"></i></a>
+                            </div>
+                            <div class="li-text">
+                                <span class="name"><label>搜聊天记录</label></span>
+                                <span class="text">查找本地聊天记录</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="li-img li-icon-flower">
+                                <a href="javascript:void(0)"><i class="icon icon-flower"></i></a>
+                            </div>
+                            <div class="li-text">
+                                <span class="name"><label>搜一搜</label></span>
+                                <span class="text">搜索文章资讯</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="contact-list list" v-else>
                     <ul>
                         <li @click="openChatBox(currentUser)">
                             <div class="li-img">
@@ -197,7 +222,8 @@
                                 </a>
                             </p>
                         </div>
-                        <textarea name="chatcontent" id="chatcontent" rows="5" v-model="chatcontent" ref="chatcontent"
+                        <textarea name="chatcontent" id="chatcontent" rows="5" 
+                        v-model="chatcontent" ref="chatcontent" v-focus="textareafocused"
                         @keyup.enter="send" @keyup.alt.83="send" @keyup.shift.enter="changeLine"></textarea>
                         <p class="commit-panel text-right">
                             <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
@@ -225,6 +251,7 @@ export default {
             "chatclicked": true,
             "collectclicked": false,
             "searchfocused": false,
+            "textareafocused": true,
             "chatcontent": '',
             "errmsgShow": false,
             "infoPopuped": false,
@@ -338,6 +365,20 @@ export default {
                 console.log(error)
             })
         }
+    },
+    "directives": {
+        "focus": {
+            "inserted": function (el, {value}) {
+                if (value) {
+                    el.focus()
+                }
+            },
+            "componentUpdated": function (el, {value}) {
+                if (value) {
+                    el.focus()
+                }
+            }
+        }
     }
     // "computed": {
     //     username () {
@@ -427,6 +468,8 @@ export default {
             padding: 24px;
             box-sizing: border-box;
             z-index: 100;
+            border-radius: 3px;
+            box-shadow: 1px 1px 6px #aaa;
             .popup-head {
                 display: flex;
                 align-items: center;
@@ -502,6 +545,7 @@ export default {
             left: 60px;
             bottom: 30px;
             background-color: rgba(0,0,0,0.75);
+            color: #aaa;
             li {
                 margin-top: 0;
                 height: 40px;
@@ -537,34 +581,35 @@ export default {
                 font-size: 14px;
             }
             input {
-                width: 82%;
+                width: 80%;
                 background: none;
                 border: none;
-                position: relative;
+                margin-left: 10px;
                 &::-webkit-input-placeholder{
                     position: relative;
-                    top: 1px;
+                    top: 2px;
                 }
                 &:-moz-placeholder{
                     position: relative;
-                    top: 1px;
+                    top: 2px;
                 }
                 &::-moz-placeholder{
                     position: relative;
-                    top: 1px;
+                    top: 2px;
                 }
                 &:-ms-input-placeholder{
                     position: relative;
-                    top: 1px;
+                    top: 2px;
                 }
                 &:focus {
                     background-color: #fff;
                     border: none;
-                    left: 2px;
                 }
             }
             .icon-label {
                 width: 5%;
+                height: 20px;
+                line-height: 20px;
             }
             .close-label {
                 width: 18px;
@@ -572,8 +617,12 @@ export default {
                 line-height: 18px;
                 background-color: #ddd;
                 border-radius: 50%;
+                opacity: 0;
                 .icon-close {
                     font-size: 18px;
+                }
+                &.show {
+                    opacity: 1;
                 }
             }
         }
@@ -585,7 +634,10 @@ export default {
                 font-size: 16px;
             }
         }
-        .contact-list {
+        .contact-list li:nth-child(1) {
+            background-color: #BCBDBD;
+        }
+        .list {
             li {
                 display: flex;
                 align-content: center;
@@ -595,15 +647,28 @@ export default {
                 &:hover {
                     background-color: #D7D5D4;
                 }
-                &:nth-child(1) {
-                    background-color: #BCBDBD;
-                }
             }
             .li-img {
                 img {
                     width: 40px;
                     height: 40px;
                     vertical-align: middle;
+                }
+                a {
+                    display: inline-flex;
+                    width: 40px;
+                    height: 40px;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #1aad19;
+                }
+                &.li-icon-flower {
+                    a {
+                        background-color: #fff;
+                    }
+                    .icon {
+                        color: pink;
+                    }
                 }
             }
             .li-text {
@@ -628,6 +693,14 @@ export default {
                     color: #999;
                 }
             }
+        }
+        .search-header {
+            height: 30px;
+            line-height: 30px;
+            color: #666;
+            background-color: #dedede;
+            padding-left: 20px;
+            font-size: 12px;
         }
     }
     .chat-box {
@@ -860,7 +933,7 @@ export default {
         .contact-box .contact-header {
             padding: 0 10px;
         }
-        .contact-box .contact-list li {
+        .contact-box .list li {
             padding: 10px;
         }
     }
