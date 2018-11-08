@@ -40,8 +40,15 @@ const actions = {
     signUp (store, data) {
         return ajax.post('/chat/user/sign_up', data)
     },
-    signOut () {
+    signOut ({commit}) {
         return ajax.post('/chat/user/sign_out')
+            .then((res) => {
+                if (res.success) {
+                    commit('setUsername', null)
+                    commit('setCK', '')
+                }
+                return res
+            })
     }
 }
 
