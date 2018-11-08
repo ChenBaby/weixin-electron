@@ -10,37 +10,34 @@
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link chat-o-link" v-show="!chatclicked" 
-                            @click="chatclicked=true;listclicked=false;collectclicked=false;">
-                                <i class="icon icon-chat-o"></i>
+                            <a href="javascript:void(0)" class="popper-link" @click="index = 0">
+                                <i class="icon" :class="[index === 0 ? 'wechat-green icon-chat' : 'icon-chat-o']"></i>
                                 <label class="popper">聊天</label>
                             </a>
-                            <a href="javascript:void(0)" class="popper-link chat-link" v-show="chatclicked">
+                            <!-- <a href="javascript:void(0)" class="popper-link chat-link" v-show="chatclicked">
                                 <i class="icon icon-chat"></i>
                                 <label class="popper">聊天</label>
-                            </a>
+                            </a> -->
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link user-list-o-link" v-show="!listclicked" 
-                            @click="listclicked=true;chatclicked=false;collectclicked=false;">
-                                <i class="icon icon-user-list-o"></i>
+                            <a href="javascript:void(0)" class="popper-link" @click="index = 1">
+                                <i class="icon" :class="[index === 1 ? 'wechat-green icon-user-list' : 'icon-user-list-o']"></i>
                                 <label class="popper">通讯录</label>
                             </a>
-                            <a href="javascript:void(0)" class="popper-link user-list-link" v-show="listclicked">
+                            <!-- <a href="javascript:void(0)" class="popper-link user-list-link" v-show="listclicked">
                                 <i class="icon icon-user-list"></i>
                                 <label class="popper">通讯录</label>
-                            </a>
+                            </a> -->
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link collect-o-link" v-show="!collectclicked" 
-                            @click="collectclicked=true;listclicked=false;chatclicked=false">
-                                <i class="icon icon-collect-o"></i>
+                            <a href="javascript:void(0)" class="popper-link" @click="index = 2">
+                                <i class="icon" :class="[index === 2 ? 'wechat-green icon-collect' : 'icon-collect-o']"></i>
                                 <label class="popper">收藏</label>
                             </a>
-                            <a href="javascript:void(0)" class="popper-link collect-link" v-show="collectclicked">
+                            <!-- <a href="javascript:void(0)" class="popper-link collect-link" v-show="collectclicked">
                                 <i class="icon icon-collect"></i>
                                 <label class="popper">收藏</label>
-                            </a>
+                            </a> -->
                         </li>
                     </ul>
                 </div>
@@ -246,9 +243,10 @@ export default {
     },
     "data": function () {
         return {
-            "listclicked": false,
-            "chatclicked": true,
-            "collectclicked": false,
+            // "listclicked": false,
+            // "chatclicked": true,
+            // "collectclicked": false,
+            "index": 0,
             "searchfocused": false,
             "textareafocused": true,
             "chatcontent": '',
@@ -375,6 +373,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+    .wechat-green {
+        color: #09BB07 !important;
+    }
     .main-box {
         width: 100%;
         height: 100%;
