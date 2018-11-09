@@ -22,11 +22,11 @@ var ajax = {
             })
     },
     post (url, data) {
-        let config = {
-            ...data,
-            "ck": encodeURIComponent(localStorage.getItem('ck') || '')
+        let datas = {
+            ...data
         }
-        return _ajax.post(url, config)
+        let _url = url + '?ck=' + encodeURIComponent(localStorage.getItem('ck') || '')
+        return _ajax.post(_url, datas)
             .then(res => {
                 if (res.data.success) {
                     return res.data
@@ -35,6 +35,25 @@ var ajax = {
                 }
             })
             .catch(err => {
+                alert(err.message)
+                return Promise.reject(new Error(err.message))
+            })
+    },
+    postform (url, data) {
+        let config = {
+            "headers": {'Content-Type': 'multipart/form-data'}
+        }
+        let _url = url + '?ck=' + encodeURIComponent(localStorage.getItem('ck') || '')
+        return _ajax.post(_url, data, config)
+            .then(res => {
+                if (res.data.success) {
+                    return res.data
+                } else {
+                    return Promise.reject(new Error(res.data.message))
+                }
+            })
+            .catch(err => {
+                alert(err.message)
                 return Promise.reject(new Error(err.message))
             })
     }
