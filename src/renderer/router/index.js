@@ -22,11 +22,6 @@ export default new Router({
             "component": require('@/components/Infoedit').default
         },
         {
-            "path": '/login',
-            "name": 'Login',
-            "component": require('@/components/Login').default
-        },
-        {
             "path": '/regist',
             "name": 'Regist',
             "component": require('@/components/Regist').default
