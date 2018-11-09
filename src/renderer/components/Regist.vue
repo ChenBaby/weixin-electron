@@ -39,19 +39,17 @@ export default {
     "methods": {
         signUp () {
             console.log(this.user)
-            this.$store.dispatch('user/signUp', {
+            this.$store.dispatch('signUp', {
                 ...this.user
             })
                 .then(res => {
                     console.log(res.data.message)
                     if (res.success) {
+                        alert(res.data.message)
                         this.$router.push({
                             "path": '/'
                         })
                     }
-                })
-                .catch(error => {
-                    alert(error.message)
                 })
         }
     }

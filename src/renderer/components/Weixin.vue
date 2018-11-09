@@ -14,30 +14,18 @@
                                 <i class="icon" :class="[index === 0 ? 'wechat-green icon-chat' : 'icon-chat-o']"></i>
                                 <label class="popper">聊天</label>
                             </a>
-                            <!-- <a href="javascript:void(0)" class="popper-link chat-link" v-show="chatclicked">
-                                <i class="icon icon-chat"></i>
-                                <label class="popper">聊天</label>
-                            </a> -->
                         </li>
                         <li>
                             <a href="javascript:void(0)" class="popper-link" @click="index = 1">
                                 <i class="icon" :class="[index === 1 ? 'wechat-green icon-user-list' : 'icon-user-list-o']"></i>
                                 <label class="popper">通讯录</label>
                             </a>
-                            <!-- <a href="javascript:void(0)" class="popper-link user-list-link" v-show="listclicked">
-                                <i class="icon icon-user-list"></i>
-                                <label class="popper">通讯录</label>
-                            </a> -->
                         </li>
                         <li>
                             <a href="javascript:void(0)" class="popper-link" @click="index = 2">
                                 <i class="icon" :class="[index === 2 ? 'wechat-green icon-collect' : 'icon-collect-o']"></i>
                                 <label class="popper">收藏</label>
                             </a>
-                            <!-- <a href="javascript:void(0)" class="popper-link collect-link" v-show="collectclicked">
-                                <i class="icon icon-collect"></i>
-                                <label class="popper">收藏</label>
-                            </a> -->
                         </li>
                     </ul>
                 </div>
@@ -50,20 +38,22 @@
                 <div class="info-popup" v-show="infoPopuped" ref="userInfo">
                     <div class="popup-head">
                         <div class="name-box text-left">
-                            <span>{{this.$store.state.user.username}}<i class="icon icon-girl"></i></span>
-                            <span><label>微信号:</label>{{currentUser.id}}</span>
+                            <span>{{currentUser.name}}
+                                <i class="icon" :class="[currentUser.sex === 'female' ? 'icon-girl' :'icon-boy']"></i>
+                            </span>
+                            <span class="email-label"><label>邮箱:</label>{{currentUser.email}}</span>
                         </div>
                         <div class="img-box">
-                            <img src="../assets/images/user.png" alt="user-img">
+                            <img :src="currentUser.image" alt="user-img">
                         </div>
                     </div>
                     <p class="text-left address-panel">
                         <span>
                             <label class="address-label">地区</label>
-                            <label class="address-value">广东惠州</label>
+                            <label class="address-value">{{currentUser.address || '中国'}}</label>
                         </span>
                     </p>
-                    <p class="popup-icons clearfix">
+                    <p class="popup-bottom clearfix">
                         <span class="float-left">
                             <router-link :to="{path: '/info'}">编辑信息</router-link>
                         </span>
@@ -243,9 +233,6 @@ export default {
     },
     "data": function () {
         return {
-            // "listclicked": false,
-            // "chatclicked": true,
-            // "collectclicked": false,
             "index": 0,
             "searchfocused": false,
             "textareafocused": true,
@@ -253,37 +240,7 @@ export default {
             "errmsgShow": false,
             "infoPopuped": false,
             "settingPopuped": false,
-            "currentUser": {
-                "id": 2,
-                "name": this.$store.state.user.username,
-                "image": require('../assets/images/user.png')
-            },
-            "contents": [
-                {
-                    "user": {
-                        "id": 1,
-                        "name": 'Richole',
-                        "image": require('../assets/images/user1.png')
-                    },
-                    "message": '亲爱的，我下班了'
-                },
-                {
-                    "user": {
-                        "id": 2,
-                        "name": 'Chen',
-                        "image": require('../assets/images/user.png')
-                    },
-                    "message": '好，吃饭了吗？'
-                },
-                {
-                    "user": {
-                        "id": 1,
-                        "name": 'Richole',
-                        "image": require('../assets/images/user1.png')
-                    },
-                    "message": '吃了，你呢'
-                }
-            ]
+            "contents": []
         }
     },
     "methods": {
@@ -339,7 +296,7 @@ export default {
             })
         },
         logout () {
-            this.$store.dispatch('user/signOut').then(res => {
+            this.$store.dispatch('signOut').then(res => {
                 console.log(res)
                 if (res.success) {
                     this.$router.push({
@@ -364,12 +321,15 @@ export default {
                 }
             }
         }
+    },
+    "watch": {
+        currentUser () {}
+    },
+    "computed": {
+        currentUser () {
+            return this.$store.state.user
+        }
     }
-    // "computed": {
-    //     username () {
-    //         return this.$store.state.username
-    //     }
-    // }
 }
 </script>
 <style lang="less" scoped>
@@ -417,7 +377,6 @@ export default {
         }
         li {
             margin-top: 24px;
-
         }
         .navbar-top img {
             width: 50%;
@@ -428,15 +387,6 @@ export default {
         }
         .navbar-top .icon-chat-o {
             font-weight: 600;
-        }
-        .icon-chat {
-            color: #09BB07;
-        }
-        .icon-user-list {
-            color: #09BB07;
-        }
-        .icon-collect {
-            color: #09BB07;
         }
         .navbar-bottom {
             position: absolute;
@@ -475,6 +425,9 @@ export default {
                 label {
                     margin-right: 5px;
                 }
+                .email-label {
+                    font-size: 12px;
+                }
             }
             .img-box {
                 height: 60px;
@@ -499,7 +452,7 @@ export default {
                 color: #999;
                 margin-right: 20px;
             }
-            .popup-icons {
+            .popup-bottom {
                 line-height: 28.8px;
                 .icon {
                     margin: 0 10px;

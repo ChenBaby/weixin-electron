@@ -1,9 +1,11 @@
 <template>
     <div class="infomation-edit-page">
         <router-link :to="{path: '/weixin'}" class="back-text"><i class="icon icon-prev"></i>返回</router-link>
-        <div class="image-pabel text-center">
-            <a href="javascript:void(0)">
+        <div class="image-panel text-center">
+            <a href="javascript:void(0)"  class="image-box">
                 <img :src="user.image" alt="user-img">
+                <label for="userimage-upload" class="input-label">更换</label>
+                <input type="file" name="userimage" id="userimage-upload" accept="image/png,image/gif,image/jpeg" ref="imgupload" @change="uploadImage">
             </a>
         </div>
         <form>
@@ -28,18 +30,48 @@
 <script>
 export default {
     "data" () {
-        return {
-            "user": {
-                "name": 'ChenShuilian',
-                "sex": '男',
-                "address": '深圳福田',
-                "image": require('../assets/images/user.png')
-            }
-        }
+        return {}
     },
     "methods": {
         save () {
-
+            if (this.user.name && this.user.sex) {
+                this.user.sex = this.user.sex === '女' ? 'female' : 'male'
+                this.$store.dispatch('saveUserInfo', {
+                    ...this.user
+                }).then(res => {
+                    if (res.success) {
+                        alert('保存成功')
+                    }
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
+        },
+        uploadImage (e) {
+            console.log('上传头像')
+            let file = this.$refs.imgupload.files[0]
+            let param = new FormData() // 创建form对象
+            param.append('head_img', file, file.name)// 通过append向form对象添加数据
+            console.log(param.get('head_img')) // FormData私有类对象，访问不到，可以通过get判断值是否传进去
+            this.$refs.imgupload.value = ''
+            this.$store.dispatch('uploadUserImage', param)
+                .then(response => {
+                    console.log(response.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+    },
+    "watch": {
+        user () {}
+    },
+    "computed": {
+        "user" () {
+            return {
+                ...this.$store.state.user,
+                "sex": this.$store.state.user.sex === 'male' ? '男' : '女'
+            }
         }
     }
 }
@@ -80,12 +112,43 @@ export default {
                 display: block;
             }
         }
-        .image-pabel {
+        .image-panel {
             img {
                 width: 120px;
                 height: 120px;
                 border-radius: 50%;
             }
+            .image-box {
+                position: relative;
+                display: inline-block;
+                height: 120px;
+                .input-label {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: inline-block;
+                    text-align: center;
+                    line-height: 120px;
+                    background-color: rgba(0,0,0,0.35);
+                    color: #fff;
+                    border-radius: 50%;
+                    display: none;
+                }
+                input {
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    opacity: 0;
+                }
+                &:hover {
+                    .input-label {
+                        display: block;
+                    }
+                }
+            }
+
         }
         .btn-save {
             display: inline-block;

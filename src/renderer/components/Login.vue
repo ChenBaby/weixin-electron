@@ -40,7 +40,7 @@ export default {
     },
     "methods": {
         signIn () {
-            this.$store.dispatch('user/signIn', {
+            this.$store.dispatch('signIn', {
                 ...this.user
             })
                 .then(res => {
@@ -50,9 +50,6 @@ export default {
                             "path": '/weixin'
                         })
                     }
-                })
-                .catch(err => {
-                    alert(err.message)
                 })
         }
     }
