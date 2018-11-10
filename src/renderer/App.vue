@@ -6,6 +6,16 @@
 
 <script>
   export default {
+      created () {
+          console.log('创建页面')
+          if (localStorage.getItem('ck')) {
+              this.$store.dispatch('getUserInfo').catch(() => {
+                  this.$router.push({
+                      "path": '/'
+                  })
+              })
+          }
+      }
   }
 </script>
 
