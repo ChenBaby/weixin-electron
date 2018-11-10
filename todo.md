@@ -272,12 +272,52 @@ event.shiftKey:false 否按下shift键 -->
  -->
 
 面试题  
-6.http和https的差别  
-12.Flex-shrink有什么作用  
-13.块级格式化上下文是什么  
-14.Vue的生命周期函数有哪些  
-15.图片base64 相比 URL加载有哪些优势  
+12.Flex-shrink有什么作用
+<!-- 用数值来定义收缩比率
+作用于伸缩盒子，当盒子内元素内容的宽度之和超出盒子元素的宽度时，flex-shrink是指按一定的比例对子元素进行缩放，默认值为1
+超出的部分将按照各因子的flex-shrink值相加之后计算比率来对各子元素进行收缩。
+ -->
+13.块级格式化上下文是什么
+<!-- 
+BFC
+ -->
+
+14.Vue的生命周期函数有哪些
+<!-- 
+beforecreate : el 和 data 并未初始化 【举个栗子：可以在这加个loading事件】
+created ：完成了 data 数据的初始化，el没有【在这结束loading，还做一些初始化，实现函数自执行】
+beforeMount：完成了 el 和 data 初始化
+mounted：完成挂载
+beforeupdate
+updated
+beforeDestroy
+destroyed
+ -->
+
+#-------------------------------自定义指令的钩子函数-------------------
+
+<!-- 
+bind只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
+inserted被绑定元素插入父节点时调用 (仅保证父节点存在，但不一定已被插入文档中)。
+update
+componentUpdated
+unbind只调用一次，指令与元素解绑时调用。
+ -->
+
+
+
 3.cookie的设置、修改、删除，以及设置expire  （我要可以直接执行的，直接可以用的）  
+<!-- 
+document.cookie = "encodeURIComponent(name)=encodeURIComponent(value); expires=expiresdate" // 设置cookie
+
+document.cookie = "encodeURIComponent(name)=encodeURIComponent(newValue); expires=newExpiresdate" //直接覆盖更改
+
+document.cookie = "name=; expires= 01 Jan 1970 00:00:00 GMT" //删除时不必指定 cookie 的值。
+ -->
+
+15.图片base64 相比 URL加载有哪些优势
+
+6.http和https的差别  
 #----------------------------- 华丽的分割线 -----------------------------  
 <!--   
 # 未来可接受任务  
@@ -287,4 +327,5 @@ Todo（Websocket联调）
 --若为前天及以前的信息直接显示时间 年-月-日 时:分  
 --上述时间需要自己做转换（一般后台会传时间戳给你） Date.now() 或 (new Date()).getTime() 得出的一串数字就是时间戳  
 --新朋友发消息给你，需要新开个聊天窗口  
+上传头像先转base64
 -->  

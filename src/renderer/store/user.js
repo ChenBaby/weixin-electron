@@ -24,7 +24,7 @@ const mutations = {
         }
     },
     setUserImage (state, url) {
-        state.user.userimage = url
+        state.user.image = url
     },
     setCK (state, data) {
         localStorage.setItem('ck', data)
@@ -32,8 +32,15 @@ const mutations = {
 }
 
 const actions = {
-    getUserInfo () {
-        return ajax.get('/chat/user/')
+    getUserInfo (store) {
+        return ajax.get('/chat/user/get_user_info', {}, true).then(res => {
+            if (res.success) {
+                store.commit('setUser', {
+                    ...res.data
+                })
+            }
+            return res
+        })
     },
     saveUserInfo (store, data) {
         return ajax.post('/chat/user/save_info', data).then(res => {
@@ -79,6 +86,13 @@ const actions = {
             if (res.success) {
                 alert(res.data.message)
                 store.commit('setUserImage', res.data.src)
+            }
+        })
+    },
+    getUsers () {
+        return ajax.get('/chat/user/get_users').then(res => {
+            if (res.success) {
+                return res.data
             }
         })
     }

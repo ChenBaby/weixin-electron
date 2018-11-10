@@ -10,29 +10,25 @@
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link" @click="index = 0">
+                            <a href="javascript:void(0)" class="popper-link" @click="index = 0" title="聊天">
                                 <i class="icon" :class="[index === 0 ? 'wechat-green icon-chat' : 'icon-chat-o']"></i>
-                                <label class="popper">聊天</label>
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link" @click="index = 1">
+                            <a href="javascript:void(0)" class="popper-link" @click="index = 1" title="通讯录">
                                 <i class="icon" :class="[index === 1 ? 'wechat-green icon-user-list' : 'icon-user-list-o']"></i>
-                                <label class="popper">通讯录</label>
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" class="popper-link" @click="index = 2">
+                            <a href="javascript:void(0)" class="popper-link" @click="index = 2" title="收藏">
                                 <i class="icon" :class="[index === 2 ? 'wechat-green icon-collect' : 'icon-collect-o']"></i>
-                                <label class="popper">收藏</label>
                             </a>
                         </li>
                     </ul>
                 </div>
                 <div class="navbar-bottom">
-                    <a href="javascript:void(0)" class="popper-link setting-link" @click.stop="settingPopuped = true;infoPopuped = false;">
+                    <a href="javascript:void(0)" class="popper-link setting-link" @click.stop="settingPopuped = true;infoPopuped = false;" title="更多">
                         <i class="icon icon-setting"></i>
-                        <label class="popper">更多</label>
                     </a>
                 </div>
                 <div class="info-popup" v-show="infoPopuped" ref="userInfo">
@@ -50,7 +46,7 @@
                     <p class="text-left address-panel">
                         <span>
                             <label class="address-label">地区</label>
-                            <label class="address-value">{{currentUser.address || '中国'}}</label>
+                            <label class="address-value">{{currentUser.address}}</label>
                         </span>
                     </p>
                     <p class="popup-bottom clearfix">
@@ -106,60 +102,55 @@
                         </li>
                     </ul>
                 </div>
-                <div class="contact-list list" v-else>
-                    <ul>
-                        <li @click="openChatBox(currentUser)">
-                            <div class="li-img">
-                                <img :src="currentUser.image" alt="chat-list-img">
-                            </div>
-                            <div class="li-text">
-                                <span class="name"><label>{{currentUser.name}}</label><label class="time">18/10/10</label></span>
-                                <span class="text">亲爱的，你洗好澡了吗？</span>
-                            </div>
-                        </li>
-                        <li @click="openChatBox(currentUser)">
-                            <div class="li-img">
-                                <img :src="currentUser.image" alt="chat-list-img">
-                            </div>
-                            <div class="li-text">
-                                <span class="name"><label>{{currentUser.name}}</label><label class="time">22:45</label></span>
-                                <span class="text">亲爱的，你洗好澡了吗？</span>
-                            </div>
-                        </li>
-                        <li @click="openChatBox(currentUser)">
-                            <div class="li-img">
-                                <img :src="currentUser.image" alt="chat-list-img">
-                            </div>
-                            <div class="li-text">
-                                <span class="name"><label>{{currentUser.name}}</label><label class="time">21:45</label></span>
-                                <span class="text">亲爱的，你洗好澡了吗？</span>
-                            </div>
-                        </li>
-                    </ul>
+                <div class="contact-container" v-else>
+                    <div class="recordlist list" v-show="index == 0">
+                        <ul>
+                            <li v-for="(user, i) in recordlists" :key="i" :class="{ active: activeIndex === i }" @click="openChatBox(user, i)">
+                                <div class="li-img">
+                                    <img :src="user.image" alt="chat-list-img">
+                                </div>
+                                <div class="li-text">
+                                    <span class="name"><label>{{user.name}}</label><label class="time">18/10/10</label></span>
+                                    <span class="text">{{user.lastrecord}}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="contactlist list" v-show="index == 1">
+                        <ul>
+                            <li v-for="(people, index) in contactlists" :key="index" @dblclick="pushToRecord(people)">
+                                <div class="li-img">
+                                    <img :src="people.image" alt="chat-list-img">
+                                </div>
+                                <div class="li-name">
+                                    <span class="name"><label>{{people.name}}</label></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="collectlist" v-show="index == 2">
+                        <span>收藏列表</span>
+                    </div>
                 </div>
             </div>
             <div class="chat-box">
                 <div class="chat-header">
                     <p class="toolbar">
-                        <a href="javascript:void(0)" class="popper-link">
+                        <a href="javascript:void(0)" class="popper-link" title="置顶">
                             <i class="icon icon-zhiding"></i>
-                            <label class="popper">置顶</label>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link">
+                        <a href="javascript:void(0)" class="popper-link" title="最小化">
                             <i class="icon icon-minimize"></i>
-                            <label class="popper">最小化</label>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link max-link">
+                        <a href="javascript:void(0)" class="popper-link max-link" title="最大化">
                             <i class="icon icon-maximize"></i>
-                            <label class="popper">最大化</label>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link close-link">
+                        <a href="javascript:void(0)" class="popper-link close-link" title="关闭">
                             <i class="icon icon-close"></i>
-                            <label class="popper">关闭</label>
                         </a>
                     </p>
                     <p class="namebar">
-                        <label class="name">{{currentUser.name}}</label>
+                        <label class="name">{{chattingUser.name}}</label>
                         <a href="javascript:void(0)" class="more-link"><i class="icon icon-more"></i></a>
                     </p>
                 </div>
@@ -181,31 +172,25 @@
                     <div class="chat-send">
                         <div class="toolbar">
                             <p class="toolbar-left">
-                                <a href="javascript:void(0)" class="popper-link">
+                                <a href="javascript:void(0)" class="popper-link" title="表情">
                                     <i class="icon icon-xiaolian"></i>
-                                    <label class="popper">表情</label>
                                 </a>
-                                <a href="javascript:void(0)" class="popper-link">
+                                <a href="javascript:void(0)" class="popper-link" title="发送文件">
                                     <i class="icon icon-wenjianjia"></i>
-                                    <label class="popper">发送文件</label>
                                 </a>
-                                <a href="javascript:void(0)" class="popper-link">
+                                <a href="javascript:void(0)" class="popper-link" title="截图">
                                     <i class="icon icon-jianqie"></i>
-                                    <label class="popper">截图</label>
                                 </a>
-                                <a href="javascript:void(0)" class="popper-link liaotianjilu">
+                                <a href="javascript:void(0)" class="popper-link liaotianjilu" title="聊天记录">
                                     <i class="icon icon-liaotianjilu"></i>
-                                    <label class="popper">聊天记录</label>
                                 </a>
                             </p>
                             <p class="toolbar-right">
-                                <a href="javascript:void(0)" class="popper-link">
+                                <a href="javascript:void(0)" class="popper-link" title="语音聊天">
                                     <i class="icon icon-dianhua"></i>
-                                    <label class="popper">语音聊天</label>
                                 </a>
-                                <a href="javascript:void(0)" class="popper-link">
+                                <a href="javascript:void(0)" class="popper-link" title="视频聊天">
                                     <i class="icon icon-shipin"></i>
-                                    <label class="popper">视频聊天</label>
                                 </a>
                             </p>
                         </div>
@@ -223,9 +208,9 @@
     </div>
 </template>
 <script>
-
 export default {
     mounted () {
+        this.getContactlist()
         this.scrollToBottom()
     },
     updated () {
@@ -240,7 +225,11 @@ export default {
             "errmsgShow": false,
             "infoPopuped": false,
             "settingPopuped": false,
-            "contents": []
+            "contents": [],
+            "recordlists": [],
+            "contactlists": [],
+            "chattingUser": '',
+            "activeIndex": null
         }
     },
     "methods": {
@@ -259,9 +248,6 @@ export default {
                     this.settingPopuped = false
                 }
             }
-        },
-        openChatBox (user) {
-            console.log('打开某人的聊天窗口')
         },
         keyDown () {
             console.log(event.keyCode, event.altKey)
@@ -306,6 +292,44 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+        },
+        getContactlist () {
+            this.$store.dispatch('getUsers').then(res => {
+                console.log(res)
+                this.contactlists = res
+            })
+        },
+        openChatBox (user, index) {
+            this.activeIndex = index
+            this.chattingUser = user
+            this.initWebSocket()
+        },
+        pushToRecord (user) {
+            console.log(user)
+            if (user._id === this.currentUser._id) return
+            if (this.recordlists.length === 0) {
+                this.recordlists.push(user)
+            } else {
+                var isInlist = false
+                this.recordlists.forEach(item => {
+                    if (item._id === user._id) {
+                        isInlist = true
+                    }
+                })
+                if (!isInlist) this.recordlists.unshift(user)
+            }
+            this.index = 0
+            this.chattingUser = user
+            this.openChatBox(user, 0)
+        },
+        initWebSocket () {
+            var ws = new WebSocket('ws://')
+            ws.onopen = function () {
+
+            }
+            ws.onmessage = function (event) {
+
+            }
         }
     },
     "directives": {
@@ -327,7 +351,10 @@ export default {
     },
     "computed": {
         currentUser () {
-            return this.$store.state.user
+            return {
+                ...this.$store.state.user,
+                "address": this.$store.state.user.address || '中国'
+            }
         }
     }
 }
@@ -342,28 +369,6 @@ export default {
         display: flex;
         align-content: center;
         position: relative;
-    }
-    .popper-link {
-        position: relative;
-        .popper {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            font-size: 12px;
-            white-space: nowrap;
-            text-align: center;
-            background-color: #fff;
-            padding: 2px;
-            border: solid 1px #666;
-            box-shadow: rgba(153, 153, 153, 0.4) 2px 2px;
-            color: #555;
-        }
-        &:hover {
-            .popper {
-                display: block;
-            }
-        }
     }
     .navbar {
         background-color:#28282b;
@@ -575,8 +580,8 @@ export default {
                 font-size: 16px;
             }
         }
-        .contact-list li:nth-child(1) {
-            background-color: #BCBDBD;
+        .recordlist li:nth-child(1) {
+            // background-color: #BCBDBD;
         }
         .list {
             li {
@@ -585,8 +590,13 @@ export default {
                 height: 60px;
                 padding: 10px 20px;
                 box-sizing: border-box;
+                user-select: none;
+                cursor: pointer;
                 &:hover {
                     background-color: #D7D5D4;
+                }
+                &.active {
+                    background-color: #BCBDBD;
                 }
             }
             .li-img {
@@ -634,6 +644,10 @@ export default {
                     color: #999;
                 }
             }
+            .li-name {
+                line-height: 40px;
+                padding-left: 10px;
+            }
         }
         .search-header {
             height: 30px;
@@ -657,6 +671,14 @@ export default {
             a {
                 display: inline-block;
             }
+            .popper-link {
+                width: 33px;
+                height: 26px;
+                line-height: 26px;
+                &:hover {
+                    background-color: #e7e7e7;
+                }
+            }
         }
         .toolbar {
             text-align: right;
@@ -670,14 +692,6 @@ export default {
                 position: relative;
                 top: 0px;
                 left: -3px;
-            }
-            .popper-link {
-                width: 33px;
-                height: 26px;
-                line-height: 26px;
-                &:hover {
-                    background-color: #e7e7e7;
-                }
             }
             .max-link {
                 position: relative;
@@ -786,6 +800,12 @@ export default {
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 10px;
+            }
+            .icon {
+                color: #666;
+                &:hover {
+                    color: #000;
+                }
             }
             textarea {
                 width: 100%;
