@@ -6,7 +6,7 @@ var options = {
 var _ajax = axios.create(options)
 
 var ajax = {
-    get (url, data) {
+    get (url, data, noAlert = false) {
         let config = {
             "params": {
                 ...data,
@@ -15,10 +15,15 @@ var ajax = {
         }
         return _ajax.get(url, config)
             .then(res => {
-                return res.data
+                if (res.data.success) {
+                    return res.data
+                } else {
+                    return Promise.reject(new Error(res.data.message))
+                }
             })
             .catch(err => {
-                return err
+                !noAlert && alert(err.message)
+                return Promise.reject(new Error(err.message))
             })
     },
     post (url, data) {
