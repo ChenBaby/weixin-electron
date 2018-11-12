@@ -1,0 +1,60 @@
+var websock = null
+var globalCallback = null
+function initWebSocket () {
+    // websock = new WebSocket('ws://richole.cn')
+    // websock.onopen = (evt) => {
+    //     // websocketOpen()
+    // }
+    // websock.onmessage = (evt) => {
+    //     // websocketonmessage(evt)
+    // }
+    // websock.onclose = (evt) => {
+    //     // websocketclose(evt)
+    // }
+    // websock.onerror = (evt) => {
+    //     console.log("WebSocket连接发生错误")
+    // }
+}
+
+// 数据接收
+function websocketonmessage (e) {
+    globalCallback(JSON.parse(e.data))
+}
+
+// 数据发送
+function websocketsend (data) {
+    websock.send(JSON.stringify(data))
+}
+
+// 关闭
+function websocketclose (e) {
+    console.log("connection closed (" + e.code + ")")
+}
+
+function websocketOpen (e) {
+    console.log("连接成功")
+}
+
+export function sendSocket (data, callback) {
+    // 测试回调的一些作用域问题（这里{a:1, b:2}是假设为websocket响应的聊天数据）
+    globalCallback = callback
+    globalCallback({
+        "a": 1, "b": 2
+    })
+    // if (websock.readyState === websock.OPEN) {
+    //     // 若是ws开启状态
+    //     websocketsend(data)
+    // } else if (websock.readyState === websock.CONNECTING) {
+    //     // 若是 正在开启状态，则等待1s后重新调用
+    //     setTimeout(function () {
+    //         websocketsend(data, callback)
+    //     }, 1000)
+    // } else {
+    //     // 若未开启 ，则等待1s后重新调用
+    //     setTimeout(function () {
+    //         websocketsend(data, callback)
+    //     }, 1000)
+    // }
+}
+
+initWebSocket()

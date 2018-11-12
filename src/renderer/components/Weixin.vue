@@ -108,6 +108,7 @@
                             <li v-for="(user, i) in recordlists" :key="i" :class="{ active: activeIndex === i }" @click="openChatBox(user, i)">
                                 <div class="li-img">
                                     <img :src="user.image" alt="chat-list-img">
+                                    <label class="mark-unread" v-show="user.unreads">{{user.unreads}}</label>
                                 </div>
                                 <div class="li-text">
                                     <span class="name"><label>{{user.name}}</label><label class="time">18/10/10</label></span>
@@ -208,13 +209,11 @@
     </div>
 </template>
 <script>
+import {sendSocket} from '@/common/socket.js'
 export default {
     mounted () {
         this.getContactlist()
         this.scrollToBottom()
-    },
-    updated () {
-        // this.scrollToBottom() //在发送框每每编辑一个字符都会触发该事件。所以正在输入字时，不滚动到最小面
     },
     "data": function () {
         return {
@@ -229,7 +228,8 @@ export default {
             "recordlists": [],
             "contactlists": [],
             "chattingUser": '',
-            "activeIndex": null
+            "activeIndex": null,
+            "datas": []
         }
     },
     "methods": {
@@ -249,7 +249,7 @@ export default {
                 }
             }
         },
-        keyDown () {
+        keyDown () { // 处理发送框textarea的事件
             console.log(event.keyCode, event.altKey)
             if (event.keyCode === 13 && event.shiftKey) {
                 this.chatcontent += '\n'
@@ -260,14 +260,21 @@ export default {
                 this.send()
             }
         },
+        bindData (data) {
+            // 测试跟websocket之间传参回调的问题
+            this.datas.push(data) // 这里this是vue
+        },
         send (event) {
             if (this.chatcontent.trim()) {
-                this.contents.push({
+                var data = {
                     "user": this.currentUser,
                     "message": this.chatcontent
-                })
-                this.chatcontent = ''
+                }
+                sendSocket(JSON.stringify(data), this.bindData) // 这里不用bind(this)竟然也可以
+                // this.contents.push(data)
+                // this.chatcontent = ''
             } else {
+                // 不能发送空消息
                 this.errmsgShow = true
                 setTimeout(() => {
                     this.errmsgShow = false
@@ -293,19 +300,16 @@ export default {
                 console.log(error)
             })
         },
-        getContactlist () {
+        getContactlist () { // 获取联系人列表
             this.$store.dispatch('getUsers').then(res => {
-                console.log(res)
                 this.contactlists = res
             })
         },
         openChatBox (user, index) {
             this.activeIndex = index
             this.chattingUser = user
-            this.initWebSocket()
         },
-        pushToRecord (user) {
-            console.log(user)
+        pushToRecord (user) { // 聊天记录栏新增一条未读消息记录
             if (user._id === this.currentUser._id) return
             if (this.recordlists.length === 0) {
                 this.recordlists.push(user)
@@ -321,15 +325,6 @@ export default {
             this.index = 0
             this.chattingUser = user
             this.openChatBox(user, 0)
-        },
-        initWebSocket () {
-            var ws = new WebSocket('ws://')
-            ws.onopen = function () {
-
-            }
-            ws.onmessage = function (event) {
-
-            }
         }
     },
     "directives": {
@@ -578,6 +573,23 @@ export default {
             border-radius: 4px;
             .icon-plus {
                 font-size: 16px;
+            }
+        }
+        .recordlist .li-img {
+            position: relative;
+            .mark-unread {
+                position: absolute;
+                right: -6px;
+                top: -6px;
+                display: block;
+                width: 16px;
+                height: 16px;
+                background-color: #ff3b30;
+                border-radius: 50%;
+                font-size: 13px;
+                text-align: center;
+                line-height: 16px;
+                color: #fff;
             }
         }
         .recordlist li:nth-child(1) {
