@@ -38,12 +38,6 @@ export default {
                 this.user.sex = this.user.sex === '女' ? 'female' : 'male'
                 this.$store.dispatch('saveUserInfo', {
                     ...this.user
-                }).then(res => {
-                    if (res.success) {
-                        alert('保存成功')
-                    }
-                }).catch(err => {
-                    console.log(err)
                 })
             }
         },
@@ -57,9 +51,6 @@ export default {
             this.$store.dispatch('uploadUserImage', param)
                 .then(response => {
                     console.log(response.data)
-                })
-                .catch(err => {
-                    console.log(err)
                 })
         }
     },

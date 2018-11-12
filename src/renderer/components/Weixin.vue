@@ -296,13 +296,11 @@ export default {
                         "path": '/'
                     })
                 }
-            }).catch(error => {
-                console.log(error)
             })
         },
         getContactlist () { // 获取联系人列表
             this.$store.dispatch('getUsers').then(res => {
-                this.contactlists = res
+                this.contactlists = res.data
             })
         },
         openChatBox (user, index) {

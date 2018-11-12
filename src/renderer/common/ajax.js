@@ -1,4 +1,5 @@
 import axios from 'axios'
+import thisvue from '../main.js'
 var options = {
     'baseURL': 'https://richole.cn',
     'withCredentials': true
@@ -18,12 +19,18 @@ var ajax = {
                 if (res.data.success) {
                     return res.data
                 } else {
-                    return Promise.reject(new Error(res.data.message))
+                    return Promise.reject(res)
                 }
             })
             .catch(err => {
-                !noAlert && alert(err.message)
-                return Promise.reject(new Error(err.message))
+                console.log(err)
+                if (err.data.errorId === 999) {
+                    alert(err.data.message)
+                    thisvue.$router.push('/')
+                } else {
+                    !noAlert && alert(err.data.message)
+                }
+                return Promise.reject(err)
             })
     },
     post (url, data) {
@@ -36,12 +43,18 @@ var ajax = {
                 if (res.data.success) {
                     return res.data
                 } else {
-                    return Promise.reject(new Error(res.data.message))
+                    return Promise.reject(res)
                 }
             })
             .catch(err => {
-                alert(err.message)
-                return Promise.reject(new Error(err.message))
+                console.log(err)
+                if (err.data.errorId === 999) {
+                    alert(err.data.message)
+                    thisvue.$router.push('/')
+                } else {
+                    alert(err.data.message)
+                }
+                return Promise.reject(err)
             })
     },
     postform (url, data) {
@@ -54,12 +67,18 @@ var ajax = {
                 if (res.data.success) {
                     return res.data
                 } else {
-                    return Promise.reject(new Error(res.data.message))
+                    return Promise.reject(res)
                 }
             })
             .catch(err => {
-                alert(err.message)
-                return Promise.reject(new Error(err.message))
+                console.log(err)
+                if (err.data.errorId === 999) {
+                    alert(err.data.message)
+                    thisvue.$router.push('/')
+                } else {
+                    alert(err.data.message)
+                }
+                return Promise.reject(err)
             })
     }
 }

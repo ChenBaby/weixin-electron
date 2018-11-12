@@ -34,36 +34,29 @@ const mutations = {
 const actions = {
     getUserInfo (store) {
         return ajax.get('/chat/user/get_user_info', {}, true).then(res => {
-            if (res.success) {
-                store.commit('setUser', {
-                    ...res.data
-                })
-            }
+            store.commit('setUser', {
+                ...res.data
+            })
             return res
         })
     },
     saveUserInfo (store, data) {
         return ajax.post('/chat/user/save_info', data).then(res => {
-            if (res.success) {
-                console.log(res.data.message)
-                store.commit('setUser', {
-                    ...res.data.userInfo
-                })
-            }
+            alert('保存成功')
+            store.commit('setUser', {
+                ...res.data.userInfo
+            })
             return res
-        }).catch(err => {
-            return err
         })
     },
     signIn ({commit}, data) {
         return ajax.post('/chat/user/sign_in', data).then((res) => {
-            if (res.success) {
-                console.log(res.data.message)
-                commit('setUser', {
-                    ...res.data.userInfo
-                })
-                commit('setCK', res.data.ck)
-            }
+            console.log(res.data.message)
+            commit('setUser', {
+                ...res.data.userInfo
+            })
+            commit('setIsLogged', true)
+            commit('setCK', res.data.ck)
             return res
         })
     },
@@ -73,28 +66,20 @@ const actions = {
     signOut ({commit}) {
         return ajax.post('/chat/user/sign_out')
             .then((res) => {
-                if (res.success) {
-                    commit('setUser', null)
-                    commit('setIsLogged', false)
-                    commit('setCK', '')
-                }
+                commit('setUser', null)
+                commit('setIsLogged', false)
+                commit('setCK', '')
                 return res
             })
     },
     uploadUserImage (store, data) {
         return ajax.postform('/chat/user/upload_head_img', data).then(res => {
-            if (res.success) {
-                alert(res.data.message)
-                store.commit('setUserImage', res.data.src)
-            }
+            alert(res.data.message)
+            store.commit('setUserImage', res.data.src)
         })
     },
     getUsers () {
-        return ajax.get('/chat/user/get_users').then(res => {
-            if (res.success) {
-                return res.data
-            }
-        })
+        return ajax.get('/chat/user/get_users')
     }
 }
 
