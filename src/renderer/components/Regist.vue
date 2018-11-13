@@ -6,15 +6,15 @@
             <form>
                 <p>
                     <label>昵称</label>
-                    <input type="text" v-model="user.name">
+                    <input type="text" v-model="user.name" required>
                 </p>
                 <p>
                     <label>邮箱</label>
-                    <input type="text" v-model="user.email">
+                    <input type="email" v-model="user.email" required>
                 </p>
                 <p>
                     <label>密码</label>
-                    <input type="password" v-model="user.password">
+                    <input type="password" v-model="user.password" required>
                 </p>
                 <p class="text-center">
                     <a href="javascript:void(0)" class="btn btn-regist" @click="signUp">注册</a>
@@ -38,19 +38,22 @@ export default {
     },
     "methods": {
         signUp () {
-            console.log(this.user)
-            this.$store.dispatch('signUp', {
-                ...this.user
-            })
-                .then(res => {
-                    console.log(res.data.message)
-                    if (res.success) {
-                        alert(res.data.message)
-                        this.$router.push({
-                            "path": '/'
-                        })
-                    }
+            if (!this.user.name || !this.user.password || !this.user.email) {
+                alert('请填写完整')
+            } else {
+                this.$store.dispatch('signUp', {
+                    ...this.user
                 })
+                    .then(res => {
+                        console.log(res.data.message)
+                        if (res.success) {
+                            alert(res.data.message)
+                            this.$router.push({
+                                "path": '/'
+                            })
+                        }
+                    })
+            }
         }
     }
 }

@@ -6,11 +6,11 @@
             <form>
                 <p>
                     <label>邮箱名</label>
-                    <input type="text" v-model="user.email">
+                    <input type="email" v-model="user.email" required>
                 </p>
                 <p>
                     <label>密码</label>
-                    <input type="password" v-model="user.password">
+                    <input type="password" v-model="user.password" @keyup.enter="signIn" required>
                 </p>
                 <p class="text-center">
                     <a href="javascript:void(0)" class="btn btn-login" @click="signIn">登录</a>
@@ -40,17 +40,19 @@ export default {
     },
     "methods": {
         signIn () {
-            this.$store.dispatch('signIn', {
-                ...this.user
-            })
-                .then(res => {
-                    console.log(res.data.message)
-                    if (res.success) {
-                        this.$router.push({
-                            "path": '/weixin'
-                        })
-                    }
+            if (this.user.email && this.user.password) {
+                this.$store.dispatch('signIn', {
+                    ...this.user
                 })
+                    .then(res => {
+                        console.log(res.data.message)
+                        if (res.success) {
+                            this.$router.push({
+                                "path": '/weixin'
+                            })
+                        }
+                    })
+            }
         }
     }
 }
