@@ -25,7 +25,7 @@ var ajax = {
             .catch(err => {
                 console.log(err)
                 if (err.data.errorId === 999) {
-                    alert(err.data.message)
+                    !noAlert && alert(err.data.message)
                     thisvue.$router.push('/')
                 } else {
                     !noAlert && alert(err.data.message)

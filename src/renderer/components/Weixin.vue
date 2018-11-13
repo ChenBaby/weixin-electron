@@ -140,13 +140,13 @@
                         <a href="javascript:void(0)" class="popper-link" title="置顶">
                             <i class="icon icon-zhiding"></i>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link" title="最小化">
+                        <a href="javascript:void(0)" class="popper-link" title="最小化" @click="minimize">
                             <i class="icon icon-minimize"></i>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link max-link" title="最大化">
-                            <i class="icon icon-maximize"></i>
+                        <a href="javascript:void(0)" class="popper-link max-link" title="最大化" @click="maximize">
+                            <i class="icon" :class="maximized ? 'icon-unmaximize' : 'icon-maximize'"></i>
                         </a>
-                        <a href="javascript:void(0)" class="popper-link close-link" title="关闭">
+                        <a href="javascript:void(0)" class="popper-link close-link" title="关闭" @click="close">
                             <i class="icon icon-close"></i>
                         </a>
                     </p>
@@ -210,6 +210,7 @@
 </template>
 <script>
 import {sendSocket} from '@/common/socket.js'
+const {"ipcRenderer": ipc} = require('electron')
 export default {
     mounted () {
         this.getContactlist()
@@ -229,6 +230,7 @@ export default {
             "contactlists": [],
             "chattingUser": '',
             "activeIndex": null,
+            "maximized": false,
             "datas": []
         }
     },
@@ -270,9 +272,9 @@ export default {
                     "user": this.currentUser,
                     "message": this.chatcontent
                 }
-                sendSocket(JSON.stringify(data), this.bindData) // 这里不用bind(this)竟然也可以
-                // this.contents.push(data)
-                // this.chatcontent = ''
+                // sendSocket(JSON.stringify(data), this.bindData) // 这里不用bind(this)竟然也可以
+                this.contents.push(data)
+                this.chatcontent = ''
             } else {
                 // 不能发送空消息
                 this.errmsgShow = true
@@ -323,6 +325,16 @@ export default {
             this.index = 0
             this.chattingUser = user
             this.openChatBox(user, 0)
+        },
+        maximize () {
+            ipc.send('max')
+            this.maximized = !this.maximized
+        },
+        minimize () {
+            ipc.send('min')
+        },
+        close () {
+            ipc.send('close')
         }
     },
     "directives": {
@@ -680,6 +692,7 @@ export default {
             border-bottom: solid 1px #ccc;
             a {
                 display: inline-block;
+                overflow: hidden;
             }
             .popper-link {
                 width: 33px;
@@ -700,13 +713,14 @@ export default {
             .icon-maximize {
                 font-size: 16px;
                 position: relative;
-                top: 0px;
-                left: -3px;
+                top: 1px;
+                left: -2px;
             }
-            .max-link {
+            .icon-unmaximize {
+                font-size: 18px;
                 position: relative;
-                top: -3px;
-                height: 27px;
+                top: 1px;
+                left: -2px;
             }
             .close-link:hover {
                 background-color: #c9302c;
@@ -886,9 +900,9 @@ export default {
             }
         }
     }
-    @media (min-width: 1280) {
-        .contact-box .contact-search {
-            width: 86%;
+    @media (max-width: 992px) {
+        .chat-box .chat-content .content {
+            max-width: 200px;
         }
     }
     @media (max-width: 768px) {
