@@ -195,12 +195,13 @@
                                 </a>
                             </p>
                         </div>
-                        <textarea name="chatcontent" id="chatcontent" rows="5" 
+                        <textarea name="chatcontent" id="chatcontent" rows="5" :disabled="!chattingUser"
                         v-model="chatcontent" ref="chatcontent" v-focus="textareafocused"
                          @keydown="keyDown"></textarea>
                         <p class="commit-panel text-right">
                             <a href="javascript:void(0)" class="send-btn" @click="send">发送(S)</a>
                             <label class="errmsg" v-show="errmsgShow">不能发送空白信息</label>
+                            <label class="errmsg" v-show="!chattingUser">请选择好友发起聊天</label>
                         </p>
                     </div>
                 </div>
@@ -262,18 +263,16 @@ export default {
                 this.send()
             }
         },
-        bindData (data) {
-            // 测试跟websocket之间传参回调的问题
-            this.datas.push(data) // 这里this是vue
-        },
         send (event) {
             if (this.chatcontent.trim()) {
                 var data = {
-                    "user": this.currentUser,
-                    "message": this.chatcontent
+                    "user_id": this.chattingUser._id,
+                    "message": this.chatcontent,
+                    "type": 'send'
                 }
-                // sendSocket(JSON.stringify(data), this.bindData) // 这里不用bind(this)竟然也可以
-                this.contents.push(data)
+                sendSocket(data, res => {
+                    // this.contents.push(res) 暂时看不到后台数据
+                })
                 this.chatcontent = ''
             } else {
                 // 不能发送空消息
@@ -837,6 +836,9 @@ export default {
                 border: none;
                 resize: none;
                 font-size: 16px;
+                &:disabled {
+                    background: none;
+                }
             }
             .send-btn {
                 display: inline-block;

@@ -22,6 +22,7 @@
     </div>
 </template>
 <script>
+import {sendSocket} from '@/common/socket.js'
 export default {
     "data": function () {
         return {
@@ -45,12 +46,17 @@ export default {
                     ...this.user
                 })
                     .then(res => {
-                        console.log(res.data.message)
-                        if (res.success) {
-                            this.$router.push({
-                                "path": '/weixin'
-                            })
+                        let data = {
+                            "email": this.user.email,
+                            "password": this.user.password,
+                            "type": 'login'
                         }
+                        sendSocket(data, response => {
+                            console.log('websocket登录：' + response)
+                        })
+                        this.$router.push({
+                            "path": '/weixin'
+                        })
                     })
             }
         }
