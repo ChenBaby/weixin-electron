@@ -102,8 +102,8 @@
                         </li>
                     </ul>
                 </div>
-                <div class="contact-container" v-else>
-                    <div class="recordlist list scrolling" v-show="index == 0">
+                <div class="contact-container full-height" v-else>
+                    <div class="recordlist list scrolling full-height" v-show="index == 0">
                         <ul>
                             <li v-for="(user, i) in recordlists" :key="i" :class="{ active: activeIndex === i }" @click="openChatBox(user, i)">
                                 <div class="li-img">
@@ -117,7 +117,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="contactlist list scrolling" v-show="index == 1">
+                    <div class="contactlist list scrolling full-height" v-show="index == 1">
                         <ul>
                             <li v-for="(people, index) in contactlists" :key="index" @dblclick="pushToRecord(people)">
                                 <div class="li-img">
@@ -158,13 +158,14 @@
                 <div class="chat-body">
                     <div class="chat-content scrolling" ref="chatcontentbox">
                         <div class="content-box">
-                            <div v-for="(content, index) in contents" :key="index">
-                                <p class="text-left" v-if="content.user.id != currentUser.id">
+                            <div v-for="(content, index) in chattingUser.contents" :key="index">
+                                <p class="text-left" v-if="content.user.user_id != currentUser._id">
+
                                     <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
                                     <span class="content content-left" v-html="content.message"></span>
                                 </p>
                                 <p class="text-right" v-else>  
-                                    <span class="content content-right" v-html="content.message">e}}</span>
+                                    <span class="content content-right" v-html="content.message"></span>
                                     <span><img :src="currentUser.image" alt="user-img" class="user-img"></span>
                                 </p>
                             </div>
@@ -224,6 +225,19 @@ export default {
                     }
                 })
             }
+            if (data.type === 'message') { // 发信息给别人
+                this.recordlists.forEach(item => {
+                    if (item._id === data.user_id) {
+                        item.contents.push({
+                            "message": data.message,
+                            "user": {
+                                "user_id": data.user_id,
+                                "image": item.image
+                            }
+                        })
+                    }
+                })
+            }
         })
     },
     beforeDestroy () {
@@ -238,7 +252,6 @@ export default {
             "errmsgShow": false,
             "infoPopuped": false,
             "settingPopuped": false,
-            "contents": [],
             "recordlists": [],
             "contactlists": [],
             "chattingUser": '',
@@ -282,7 +295,13 @@ export default {
                     "type": 'send'
                 }
                 sendSocket(data, res => {
-                    // this.contents.push(res) 暂时看不到后台数据
+                    console.log(res.data.message)
+                    this.chattingUser.contents.push({
+                        "message": content,
+                        "user": {
+                            "user_id": this.currentUser._id
+                        }
+                    })
                 })
                 this.chatcontent = ''
             } else {
@@ -321,6 +340,7 @@ export default {
         },
         pushToRecord (user) { // 聊天记录栏新增一条未读消息记录
             if (user._id === this.currentUser._id) return
+            user.contents = []
             if (this.recordlists.length === 0) {
                 this.recordlists.push(user)
             } else {

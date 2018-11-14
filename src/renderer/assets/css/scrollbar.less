@@ -1,13 +1,17 @@
-::-webkit-scrollbar {/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸，背景是滚动条整体部分*/
-    width: 6px;
-    height: 6px;
-}
-::-webkit-scrollbar-thumb {/*定义滚动条里面滚动的方块，可以拖动的那个*/
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    background-color: #ccc;
-}
-::-webkit-scrollbar-track {/*定义滚动条的轨道（里面装有Thumb）*/
-    background-color: transparent
+.scrolling {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸，背景是滚动条整体部分*/
+        width: 6px;
+        height: 6px;
+    }
+    &::-webkit-scrollbar-thumb {/*定义滚动条里面滚动的方块，可以拖动的那个*/
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        background-color: #ccc;
+    }
+    &::-webkit-scrollbar-track {/*定义滚动条的轨道（里面装有Thumb）*/
+        background-color: transparent
+    }
 }

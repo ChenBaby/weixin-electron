@@ -1,10 +1,47 @@
 import axios from 'axios'
+import {Loading, Message} from 'element-ui'
 import thisvue from '../main.js'
 var options = {
     'baseURL': 'https://richole.cn',
     'withCredentials': true
 }
 var _ajax = axios.create(options)
+
+// 添加请求拦截器
+var loading
+_ajax.interceptors.request.use(config => {
+    // 请求前到请求到数据这段时间用加载动画来代替，以服务方式调用
+    loading = Loading.service({
+        "fullscreen": true,
+        "text": '拼命加载中...'
+    })
+    return config
+}, error => {
+    // loading = Loading.service({})
+    loading.close() // 关闭加载前，记得重新定义实例
+    Message.error({
+        "message": '加载超时'
+    })
+    return Promise.reject(error)
+})
+
+// http response 拦截器
+_ajax.interceptors.response.use(response => {
+    // loading = Loading.service({})
+    loading.close()
+    return response
+},
+error => {
+    // loading = Loading.service({
+    //     "fullscreen": true,
+    //     "text": '拼命加载中...'
+    // })
+    loading.close()
+    Message.error({
+        "message": '加载失败'
+    })
+    return Promise.reject(error)
+})
 
 var ajax = {
     get (url, data, noAlert = false) {

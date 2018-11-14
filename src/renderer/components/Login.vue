@@ -53,6 +53,9 @@ export default {
                         }
                         sendSocket(data, response => {
                             console.log('websocket登录：' + response)
+                            if (response.type === 'login') {
+                                var newLoginUser = response.user_id
+                            }
                         })
                         this.$router.push({
                             "path": '/weixin'
