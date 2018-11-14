@@ -1,3 +1,4 @@
+import Bus from './bus.js'
 var websock = null
 var globalCallback = null
 function initWebSocket () {
@@ -24,6 +25,7 @@ function websocketonmessage (e) {
     } else {
         globalCallback(data)
     }
+    Bus.$emit('onmessage', data)
 }
 
 // 数据发送

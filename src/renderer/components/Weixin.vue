@@ -103,7 +103,7 @@
                     </ul>
                 </div>
                 <div class="contact-container" v-else>
-                    <div class="recordlist list" v-show="index == 0">
+                    <div class="recordlist list scrolling" v-show="index == 0">
                         <ul>
                             <li v-for="(user, i) in recordlists" :key="i" :class="{ active: activeIndex === i }" @click="openChatBox(user, i)">
                                 <div class="li-img">
@@ -117,11 +117,11 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="contactlist list" v-show="index == 1">
+                    <div class="contactlist list scrolling" v-show="index == 1">
                         <ul>
                             <li v-for="(people, index) in contactlists" :key="index" @dblclick="pushToRecord(people)">
                                 <div class="li-img">
-                                    <img :src="people.image" alt="chat-list-img">
+                                    <img :src="people.image" alt="chat-list-img" :class="people.isLogin ? '' : 'gray'">
                                 </div>
                                 <div class="li-name">
                                     <span class="name"><label>{{people.name}}</label></span>
@@ -156,15 +156,15 @@
                     </p>
                 </div>
                 <div class="chat-body">
-                    <div class="chat-content" ref="chatcontentbox">
+                    <div class="chat-content scrolling" ref="chatcontentbox">
                         <div class="content-box">
                             <div v-for="(content, index) in contents" :key="index">
                                 <p class="text-left" v-if="content.user.id != currentUser.id">
                                     <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
-                                    <span class="content content-left">{{content.message}}</span>
+                                    <span class="content content-left" v-html="content.message"></span>
                                 </p>
                                 <p class="text-right" v-else>  
-                                    <span class="content content-right">{{content.message}}</span>
+                                    <span class="content content-right" v-html="content.message">e}}</span>
                                     <span><img :src="currentUser.image" alt="user-img" class="user-img"></span>
                                 </p>
                             </div>
@@ -216,6 +216,18 @@ export default {
     mounted () {
         this.getContactlist()
         this.scrollToBottom()
+        this.$EventBus.$on('onmessage', (data) => {
+            if (data.type === 'login') {
+                this.contactlists.forEach(item => {
+                    if (item._id === data.user_id) {
+                        item.isLogin = true
+                    }
+                })
+            }
+        })
+    },
+    beforeDestroy () {
+        this.$EventBus.$off('onmessage')
     },
     "data": function () {
         return {
@@ -231,8 +243,7 @@ export default {
             "contactlists": [],
             "chattingUser": '',
             "activeIndex": null,
-            "maximized": false,
-            "datas": []
+            "maximized": false
         }
     },
     "methods": {
@@ -253,7 +264,6 @@ export default {
             }
         },
         keyDown () { // 处理发送框textarea的事件
-            console.log(event.keyCode, event.altKey)
             if (event.keyCode === 13 && event.shiftKey) {
                 this.chatcontent += '\n'
             } else if (event.keyCode === 13) {
@@ -263,11 +273,12 @@ export default {
                 this.send()
             }
         },
-        send (event) {
-            if (this.chatcontent.trim()) {
+        send () {
+            if (this.chatcontent) {
+                var content = this.chatcontent.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
                 var data = {
                     "user_id": this.chattingUser._id,
-                    "message": this.chatcontent,
+                    "message": content,
                     "type": 'send'
                 }
                 sendSocket(data, res => {
@@ -604,6 +615,16 @@ export default {
         .recordlist li:nth-child(1) {
             // background-color: #BCBDBD;
         }
+        .contactlist .li-img {
+            .gray {
+                -webkit-filter: grayscale(100%);
+                -moz-filter: grayscale(100%);
+                -ms-filter: grayscale(100%);
+                -o-filter: grayscale(100%);
+                filter: grayscale(100%);
+                filter: gray;
+            }
+        }
         .list {
             li {
                 display: flex;
@@ -748,7 +769,6 @@ export default {
             padding: 5px 30px 0;
             height: 73.4%;
             box-sizing: border-box;
-            overflow-y: scroll;
 
             &:hover {
                 &::-webkit-scrollbar-thumb {
