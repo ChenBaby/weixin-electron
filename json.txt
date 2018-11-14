@@ -1,0 +1,20 @@
+websocket 登录
+{"type": "login", "email": "richole.yu@qq.com", "password": "ddainn1314"}
+成功向所有人包括你自己
+{ "type": "login", "user_id": id }
+失败
+{"success": false, "errorId": id, message: "错误原因", data: {}}
+------------------------------------
+websocket 发消息给别人
+{"type": "send", "user_id": id, "message": ""}
+成功向对方发送
+{ "type": "message", "user_id": 你的id, "message": "" }
+成功向你发送
+{ "message": "消息发送成功", "type": "send_message" }
+失败
+{"success": false, "errorId": id, message: "错误原因", data: {}}
+------------------------------------
+websocket 心跳包
+{"type": "ping"}
+返回
+{"message": "pong", "type": "pong"}
