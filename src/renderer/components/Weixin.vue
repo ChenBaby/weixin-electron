@@ -160,7 +160,6 @@
                         <div class="content-box">
                             <div v-for="(content, index) in chattingUser.contents" :key="index">
                                 <p class="text-left" v-if="content.user.user_id != currentUser._id">
-
                                     <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
                                     <span class="content content-left" v-html="content.message"></span>
                                 </p>
@@ -225,7 +224,7 @@ export default {
                     }
                 })
             }
-            if (data.type === 'message') { // 发信息给别人
+            if (data.type === 'message') {
                 this.recordlists.forEach(item => {
                     if (item._id === data.user_id) {
                         item.contents.push({

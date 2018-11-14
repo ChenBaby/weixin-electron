@@ -1,7 +1,6 @@
 import Bus from './bus.js'
 var websock = null
 var globalCallback = null
-var interval = null
 function initWebSocket () {
     websock = new WebSocket('ws://richole.cn:9091')
     websock.onopen = (evt) => {
@@ -22,7 +21,6 @@ function initWebSocket () {
 function websocketonmessage (e) {
     let data = JSON.parse(e.data)
     if (!data.success) {
-        // alert(data.message) 使用自己定义的弹窗提示
         console.log(data)
     } else {
         globalCallback(data)
@@ -38,18 +36,10 @@ function websocketsend (data) {
 // 关闭
 function websocketclose (e) {
     console.log("connection closed (" + e.code + ")")
-    clearInterval(interval)
 }
 
 function websocketOpen (e) {
     console.log("连接成功")
-    interval = setInterval(sendSocket({
-        "type": "ping"
-    }, (data) => {
-        if (data.type === 'pong') {
-            console.log(data.message)
-        }
-    }), 30000)
 }
 
 export function sendSocket (data, callback) {
