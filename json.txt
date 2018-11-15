@@ -18,3 +18,7 @@ websocket 心跳包
 {"type": "ping"}
 返回
 {"message": "pong", "type": "pong"}
+------------------------------------
+websocket 用户退出websocket广播给其他用户 (不是实时，后台每15秒轮询检查是否在线)
+{"type": "logout", "user_id": id}
+------------------------------------
