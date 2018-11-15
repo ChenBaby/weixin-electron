@@ -107,7 +107,7 @@
                         <ul>
                             <li v-for="(user, i) in recordlists" :key="i" :class="{ active: activeIndex === i }" @click="openChatBox(user, i)">
                                 <div class="li-img">
-                                    <img :src="user.image" alt="chat-list-img">
+                                    <img :src="user.image" alt="chat-list-img" :class="user.isLogin ? '' : 'gray'">
                                     <label class="mark-unread" v-show="user.unreads">{{user.unreads}}</label>
                                 </div>
                                 <div class="li-text">
@@ -218,6 +218,11 @@ export default {
         this.scrollToBottom()
         this.$EventBus.$on('onmessage', (data) => {
             if (data.type === 'login') {
+                this.recordlists.forEach(item => {
+                    if (item._id === data.user_id) {
+                        item.isLogin = true
+                    }
+                })
                 this.contactlists.forEach(item => {
                     if (item._id === data.user_id) {
                         item.isLogin = true
@@ -244,11 +249,25 @@ export default {
                         }
                     }
                 })
+                this.scrollToBottom()
             }
+        })
+        this.$EventBus.$on('sockonlogout', (data) => {
+            this.contactlists.forEach(item => {
+                if (item._id === data.user_id) {
+                    item.isLogin = false
+                }
+            })
+            this.recordlists.forEach(item => {
+                if (item._id === data.user_id) {
+                    item.isLogin = false
+                }
+            })
         })
     },
     beforeDestroy () {
         this.$EventBus.$off('onmessage')
+        this.$EventBus.$off('sockonlogout')
     },
     "data": function () {
         return {
@@ -310,6 +329,7 @@ export default {
                         }
                     })
                     this.chatcontent = ''
+                    this.scrollToBottom()
                 })
             } else {
                 // 不能发送空消息
@@ -318,7 +338,6 @@ export default {
                     this.errmsgShow = false
                 }, 2000)
             }
-            this.scrollToBottom()
         },
         scrollToBottom () {
             this.$nextTick(() => {
@@ -668,7 +687,7 @@ export default {
         .recordlist li:nth-child(1) {
             // background-color: #BCBDBD;
         }
-        .contactlist .li-img {
+        .recordlist .li-img, .contactlist .li-img {
             .gray {
                 -webkit-filter: grayscale(100%);
                 -moz-filter: grayscale(100%);

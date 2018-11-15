@@ -27,9 +27,9 @@ function websocketonmessage (e) {
         globalCallback(data)
     }
     Bus.$emit('onmessage', data)
-    // if (data.type === 'logout') {
-    //     Bus.$emit('onlogout', data)
-    // }
+    if (data.type === 'logout') {
+        Bus.$emit('sockonlogout', data)
+    }
 }
 
 // 数据发送
