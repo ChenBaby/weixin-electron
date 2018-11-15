@@ -1,6 +1,7 @@
 import Bus from './bus.js'
 var websock = null
 var globalCallback = null
+var interval = null
 function initWebSocket () {
     websock = new WebSocket('ws://richole.cn:9091')
     websock.onopen = (evt) => {
@@ -26,6 +27,9 @@ function websocketonmessage (e) {
         globalCallback(data)
     }
     Bus.$emit('onmessage', data)
+    // if (data.type === 'logout') {
+    //     Bus.$emit('onlogout', data)
+    // }
 }
 
 // 数据发送
@@ -36,10 +40,18 @@ function websocketsend (data) {
 // 关闭
 function websocketclose (e) {
     console.log("connection closed (" + e.code + ")")
+    clearInterval(interval)
 }
 
 function websocketOpen (e) {
     console.log("连接成功")
+    interval = setInterval(sendSocket({
+        "type": "ping"
+    }, (res) => {
+        if (res.type === 'pong') {
+            console.log(res.message)
+        }
+    }), 30000)
 }
 
 export function sendSocket (data, callback) {
