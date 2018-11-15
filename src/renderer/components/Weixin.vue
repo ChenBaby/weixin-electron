@@ -225,8 +225,9 @@ export default {
                 })
             }
             if (data.type === 'message') {
-                this.recordlists.forEach(item => {
+                this.contactlists.forEach(item => {
                     if (item._id === data.user_id) {
+                        item.contents = item.contents || []
                         item.contents.push({
                             "message": data.message,
                             "user": {
@@ -234,6 +235,13 @@ export default {
                                 "image": item.image
                             }
                         })
+                        item.lastrecord = data.message
+                        if (this.chattingUser && data.user_id !== this.chattingUser._id) { // 不是正在聊天的窗口，不默认打开聊天框
+                            item.unreads = item.unreads + 1 || 1
+                            this.pushToRecord(item, false)
+                        } else {
+                            this.pushToRecord(item)
+                        }
                     }
                 })
             }
@@ -301,8 +309,8 @@ export default {
                             "user_id": this.currentUser._id
                         }
                     })
+                    this.chatcontent = ''
                 })
-                this.chatcontent = ''
             } else {
                 // 不能发送空消息
                 this.errmsgShow = true
@@ -333,27 +341,45 @@ export default {
                 this.contactlists = res.data
             })
         },
-        openChatBox (user, index) {
-            this.activeIndex = index
-            this.chattingUser = user
+        openChatBox (user, index, isopen = true) {
+            if (isopen) {
+                this.activeIndex = index
+                this.chattingUser = user
+                this.recordlists.forEach((item, i) => {
+                    if (item._id === this.chattingUser._id) {
+                        item.unreads = 0
+                    }
+                })
+            } else {
+                this.recordlists.forEach((item, i) => {
+                    if (item._id === this.chattingUser._id) {
+                        this.activeIndex = i
+                    }
+                })
+            }
         },
-        pushToRecord (user) { // 聊天记录栏新增一条未读消息记录
+        pushToRecord (user, tochat = true) { // 聊天记录栏新增一条未读消息记录
             if (user._id === this.currentUser._id) return
-            user.contents = []
+            user.contents = user.contents || []
             if (this.recordlists.length === 0) {
                 this.recordlists.push(user)
             } else {
                 var isInlist = false
-                this.recordlists.forEach(item => {
+                var lists = null
+                this.recordlists.forEach((item, index) => {
                     if (item._id === user._id) {
                         isInlist = true
+                        lists = this.recordlists.splice(index, 1)
                     }
                 })
-                if (!isInlist) this.recordlists.unshift(user)
+                if (!isInlist) {
+                    this.recordlists.unshift(user)
+                } else {
+                    this.recordlists = lists.concat(this.recordlists)
+                }
             }
             this.index = 0
-            this.chattingUser = user
-            this.openChatBox(user, 0)
+            this.openChatBox(user, 0, tochat)
         },
         maximize () {
             ipc.send('max')
@@ -381,7 +407,15 @@ export default {
         }
     },
     "watch": {
-        currentUser () {}
+        currentUser () {},
+        "chattingUser": {
+            handler (newValue, oldValue) {},
+            "deep": true
+        },
+        "recordlists": {
+            handler (newValue, oldValue) {},
+            "deep": true
+        }
     },
     "computed": {
         currentUser () {
