@@ -23,6 +23,7 @@
 </template>
 <script>
 import {sendSocket} from '@/common/socket.js'
+import log from '@/common/fs.js'
 export default {
     "data": function () {
         return {
@@ -54,7 +55,14 @@ export default {
                         sendSocket(data, response => {
                             console.log('websocket登录：' + response)
                             if (response.type === 'login') {
-                                var newLoginUser = response.user_id
+                                if (this.$store.state.isLogged) return
+                                log.mkdir('log/' + response.user_id + '/') // 创建这个用户log的文件夹
+                            }
+                            if (response.success === false && response.message) {
+                                this.$message({
+                                    "message": response.message,
+                                    "type": 'error'
+                                })
                             }
                         })
                         this.$router.push({

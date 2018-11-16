@@ -27,21 +27,23 @@ function initWebSocket () {
 // 数据接收
 function websocketonmessage (e) {
     let data = JSON.parse(e.data)
+    let type = data.type || (data.data && data.data.type)
     if (!data.success) {
         console.log(data)
-        if (data.errorId === 20001) {
+        if (data.errorId === 20001) { // 验证身份失效，需要重新登录
             $message({
                 "message": data.message,
                 "type": 'error'
             })
         }
-    } else {
-        globalCallback(data)
     }
-    Bus.$emit('onmessage', data)
     if (data.type === 'logout') {
         Bus.$emit('sockonlogout', data)
     }
+    if (type === 'login' || type === 'send_message' || type === 'send_message') { // 有执行发送socket的才执行它带过来的回调
+        globalCallback(data)
+    }
+    Bus.$emit('onmessage', data)
 }
 
 // 数据发送

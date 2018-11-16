@@ -211,27 +211,30 @@
 </template>
 <script>
 import {sendSocket} from '@/common/socket.js'
+import log from '@/common/fs.js'
 const {"ipcRenderer": ipc} = require('electron')
 export default {
+    created () {
+        log.readdir('log/' + this.currentUser._id, (files) => {
+            files.forEach(file => {
+                log.read('log/' + this.currentUser._id + '/' + file, (datas) => {
+                    this.recordlists = datas
+                })
+            })
+        })
+    },
     mounted () {
         this.getContactlist()
         this.scrollToBottom()
         this.$EventBus.$on('onmessage', (data) => {
             if (data.type === 'login') {
-                this.recordlists.forEach(item => {
-                    if (item._id === data.user_id) {
-                        item.isLogin = true
-                    }
-                })
-                this.contactlists.forEach(item => {
-                    if (item._id === data.user_id) {
-                        item.isLogin = true
-                    }
-                })
+                this.setIsLogin(data, true)
             }
             if (data.type === 'message') {
-                this.contactlists.forEach(item => {
+                let hasrecord = false
+                this.recordlists.forEach(item => {
                     if (item._id === data.user_id) {
+                        hasrecord = true
                         item.contents = item.contents || []
                         item.contents.push({
                             "message": data.message,
@@ -247,22 +250,42 @@ export default {
                         } else {
                             this.pushToRecord(item)
                         }
+                        var path = 'log/' + this.currentUser._id + '/' + data.user_id + '.log'
+                        log.write(path, {
+                            ...item
+                        })
                     }
                 })
+                if (!hasrecord) {
+                    this.contactlists.forEach(item => {
+                        if (item._id === data.user_id) {
+                            item.contents = item.contents || []
+                            item.contents.push({
+                                "message": data.message,
+                                "user": {
+                                    "user_id": data.user_id,
+                                    "image": item.image
+                                }
+                            })
+                            item.lastrecord = data.message
+                            if (this.chattingUser && data.user_id !== this.chattingUser._id) { // 不是正在聊天的窗口，不默认打开聊天框
+                                item.unreads = item.unreads + 1 || 1
+                                this.pushToRecord(item, false)
+                            } else {
+                                this.pushToRecord(item)
+                            }
+                            var path = 'log/' + this.currentUser._id + '/' + data.user_id + '.log'
+                            log.write(path, {
+                                ...item
+                            })
+                        }
+                    })
+                }
                 this.scrollToBottom()
             }
         })
         this.$EventBus.$on('sockonlogout', (data) => {
-            this.contactlists.forEach(item => {
-                if (item._id === data.user_id) {
-                    item.isLogin = false
-                }
-            })
-            this.recordlists.forEach(item => {
-                if (item._id === data.user_id) {
-                    item.isLogin = false
-                }
-            })
+            this.setIsLogin(data, false)
         })
     },
     beforeDestroy () {
@@ -327,15 +350,22 @@ export default {
                         "type": 'send'
                     }
                     sendSocket(data, res => {
-                        console.log(res.data.message)
-                        this.chattingUser.contents.push({
-                            "message": content,
-                            "user": {
-                                "user_id": this.currentUser._id
-                            }
-                        })
-                        this.chatcontent = ''
-                        this.scrollToBottom()
+                        console.log(res)
+                        if (res.data.type === 'send_message') {
+                            this.chattingUser.contents.push({
+                                "message": content,
+                                "user": {
+                                    "user_id": this.currentUser._id
+                                }
+                            })
+                            this.chattingUser.lastrecord = this.chatcontent.replace(/(\n || \s+$)/g, '')
+                            var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
+                            log.write(path, {
+                                ...this.chattingUser
+                            })
+                            this.chatcontent = ''
+                            this.scrollToBottom()
+                        }
                     })
                 } else {
                 // 不能发送空消息
@@ -365,6 +395,7 @@ export default {
         getContactlist () { // 获取联系人列表
             this.$store.dispatch('getUsers').then(res => {
                 this.contactlists = res.data
+                this.checkIsLogin()
             })
         },
         openChatBox (user, index, isopen = true) { // isopen 是否切换至正在聊天
@@ -374,6 +405,10 @@ export default {
                 this.recordlists.forEach((item, i) => {
                     if (item._id === this.chattingUser._id) {
                         item.unreads = 0
+                        var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
+                        log.write(path, { // 从本地聊天记录生成的文件，再打开点击标记已读
+                            ...this.chattingUser
+                        })
                     }
                 })
             } else {
@@ -383,6 +418,7 @@ export default {
                     }
                 })
             }
+            this.scrollToBottom()
         },
         pushToRecord (user, tochat = true) { // 聊天记录栏新增一条未读消息记录
             if (user._id === this.currentUser._id) return
@@ -416,6 +452,28 @@ export default {
         },
         close () {
             ipc.send('close')
+        },
+        setIsLogin (data, is) {
+            this.recordlists.forEach(item => {
+                if (item._id === data.user_id) {
+                    item.isLogin = is
+                }
+            })
+            this.contactlists.forEach(item => {
+                if (item._id === data.user_id) {
+                    item.isLogin = is
+                }
+            })
+        },
+        checkIsLogin () {
+            this.recordlists.forEach(recorditem => {
+                for (let i = 0;i < this.contactlists.length; i++) {
+                    if (recorditem._id === this.contactlists[i]._id) {
+                        recorditem.isLogin = this.contactlists[i].isLogin
+                        break
+                    }
+                }
+            })
         }
     },
     "directives": {
