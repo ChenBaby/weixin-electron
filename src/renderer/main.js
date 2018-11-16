@@ -5,10 +5,13 @@ import App from './App'
 import router from './router'
 import store from './store'
 import Bus from '@/common/bus'
+import Message from '@/common/message'
+
+Vue.prototype.$EventBus = Bus
+Vue.prototype.$message = Message.install
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
-Vue.prototype.$EventBus = Bus
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

@@ -1,7 +1,10 @@
 import Bus from './bus.js'
+import Message from '@/common/message'
+
 var websock = null
 var globalCallback = null
 var interval = null
+var $message = Message.install
 function initWebSocket () {
     websock = new WebSocket('ws://richole.cn:9091')
     websock.onopen = (evt) => {
@@ -14,7 +17,10 @@ function initWebSocket () {
         websocketclose(evt)
     }
     websock.onerror = (evt) => {
-        console.log("WebSocket连接发生错误")
+        $message({
+            "message": 'WebSocket连接发生错误',
+            "type": 'error'
+        })
     }
 }
 
@@ -23,6 +29,12 @@ function websocketonmessage (e) {
     let data = JSON.parse(e.data)
     if (!data.success) {
         console.log(data)
+        if (data.errorId === 20001) {
+            $message({
+                "message": data.message,
+                "type": 'error'
+            })
+        }
     } else {
         globalCallback(data)
     }

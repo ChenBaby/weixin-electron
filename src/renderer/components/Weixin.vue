@@ -195,7 +195,7 @@
                                 </a>
                             </p>
                         </div>
-                        <textarea name="chatcontent" id="chatcontent" rows="5" :disabled="!chattingUser"
+                        <textarea name="chatcontent" id="chatcontent" rows="5" :disabled="!chattingUser || !chattingUser.isLogin"
                         v-model="chatcontent" ref="chatcontent" v-focus="textareafocused"
                          @keydown="keyDown"></textarea>
                         <p class="commit-panel text-right">
@@ -313,30 +313,37 @@ export default {
             }
         },
         send () {
-            if (this.chatcontent) {
-                var content = this.chatcontent.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
-                var data = {
-                    "user_id": this.chattingUser._id,
-                    "message": content,
-                    "type": 'send'
-                }
-                sendSocket(data, res => {
-                    console.log(res.data.message)
-                    this.chattingUser.contents.push({
-                        "message": content,
-                        "user": {
-                            "user_id": this.currentUser._id
-                        }
-                    })
-                    this.chatcontent = ''
-                    this.scrollToBottom()
+            if (!this.chattingUser.isLogin) {
+                this.$message({
+                    "message": '该用户是离线状态，不能发送消息',
+                    "type": 'warning'
                 })
             } else {
+                if (this.chatcontent) {
+                    var content = this.chatcontent.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
+                    var data = {
+                        "user_id": this.chattingUser._id,
+                        "message": content,
+                        "type": 'send'
+                    }
+                    sendSocket(data, res => {
+                        console.log(res.data.message)
+                        this.chattingUser.contents.push({
+                            "message": content,
+                            "user": {
+                                "user_id": this.currentUser._id
+                            }
+                        })
+                        this.chatcontent = ''
+                        this.scrollToBottom()
+                    })
+                } else {
                 // 不能发送空消息
-                this.errmsgShow = true
-                setTimeout(() => {
-                    this.errmsgShow = false
-                }, 2000)
+                    this.errmsgShow = true
+                    setTimeout(() => {
+                        this.errmsgShow = false
+                    }, 2000)
+                }
             }
         },
         scrollToBottom () {
@@ -360,7 +367,7 @@ export default {
                 this.contactlists = res.data
             })
         },
-        openChatBox (user, index, isopen = true) {
+        openChatBox (user, index, isopen = true) { // isopen 是否切换至正在聊天
             if (isopen) {
                 this.activeIndex = index
                 this.chattingUser = user
