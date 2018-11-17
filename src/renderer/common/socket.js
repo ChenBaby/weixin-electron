@@ -1,10 +1,9 @@
 import Bus from './bus.js'
-import Message from '@/common/message'
+import Message from '@/plugin/message'
 
 var websock = null
 var globalCallback = null
 var interval = null
-var $message = Message.install
 function initWebSocket () {
     websock = new WebSocket('ws://richole.cn:9091')
     websock.onopen = (evt) => {
@@ -17,10 +16,7 @@ function initWebSocket () {
         websocketclose(evt)
     }
     websock.onerror = (evt) => {
-        $message({
-            "message": 'WebSocket连接发生错误',
-            "type": 'error'
-        })
+        Message.$error('WebSocket连接发生错误')
     }
 }
 
@@ -31,10 +27,7 @@ function websocketonmessage (e) {
     if (!data.success) {
         console.log(data)
         if (data.errorId === 20001) { // 验证身份失效，需要重新登录
-            $message({
-                "message": data.message,
-                "type": 'error'
-            })
+            Message.$error(data.message)
         }
     }
     if (data.type === 'logout') {
