@@ -1,7 +1,7 @@
 import ajax from '@/common/ajax.js'
 const state = {
-    "user": {},
-    "isLogged": false
+    user: {},
+    isLogged: false
 }
 
 const mutations = {

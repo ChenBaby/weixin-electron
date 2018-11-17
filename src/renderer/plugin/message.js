@@ -7,7 +7,7 @@ let MyPlugin = {}
 MyPlugin.install = function (Vue) {
     Vue.prototype.$message = Vue.prototype.$info = MyPlugin.$info = function (message, type = 'info') {
         let instance = new MessageBox({
-            "data": { message, type }
+            data: { message, type }
         }).$mount()
 
         document.body.appendChild(instance.$el)

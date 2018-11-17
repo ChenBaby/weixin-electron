@@ -9,19 +9,19 @@
 </template>
 <script>
 export default {
-    "name": 'message',
-    "data": function () {
+    name: 'message',
+    data: function () {
         return {
-            "type": 'info',
-            "message": '',
-            "visible": false,
-            "hasClose": false
+            type: 'info',
+            message: '',
+            visible: false,
+            hasClose: false
         }
     },
     mounted () {
         this.close()
     },
-    "methods": {
+    methods: {
         close () {
             setTimeout(() => {
                 this.visible = false

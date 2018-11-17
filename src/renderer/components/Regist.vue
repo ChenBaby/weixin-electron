@@ -27,16 +27,16 @@
 </template>
 <script>
 export default {
-    "data" () {
+    data () {
         return {
-            "user": {
-                "name": '',
-                "password": '',
-                "email": ''
+            user: {
+                name: '',
+                password: '',
+                email: ''
             }
         }
     },
-    "methods": {
+    methods: {
         signUp () {
             if (!this.user.name || !this.user.password || !this.user.email) {
                 alert('请填写完整')
@@ -49,7 +49,7 @@ export default {
                         if (res.success) {
                             alert(res.data.message)
                             this.$router.push({
-                                "path": '/'
+                                path: '/'
                             })
                         }
                     })

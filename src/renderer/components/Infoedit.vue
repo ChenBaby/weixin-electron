@@ -29,10 +29,10 @@
 </template>
 <script>
 export default {
-    "data" () {
+    data () {
         return {}
     },
-    "methods": {
+    methods: {
         save () {
             if (this.user.name && this.user.sex) {
                 this.user.sex = this.user.sex === '女' ? 'female' : 'male'
@@ -54,14 +54,14 @@ export default {
                 })
         }
     },
-    "watch": {
+    watch: {
         user () {}
     },
-    "computed": {
+    computed: {
         "user" () {
             return {
                 ...this.$store.state.user,
-                "sex": this.$store.state.user.sex === 'male' ? '男' : '女'
+                sex: this.$store.state.user.sex === 'male' ? '男' : '女'
             }
         }
     }

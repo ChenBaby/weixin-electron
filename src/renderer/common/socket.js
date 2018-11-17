@@ -53,7 +53,7 @@ function websocketOpen (e) {
     console.log("连接成功")
     interval = setInterval(() => {
         sendSocket({
-            "type": "ping"
+            type: "ping"
         }, () => {})
     }, 30000)
 }

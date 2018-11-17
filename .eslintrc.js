@@ -32,6 +32,6 @@ module.exports = {
     "after": false
     }],
     "quotes": [0],
-    "quote-props": ["error", "always"]
+    "quote-props": ["error", "consistent-as-needed"]
   }
 }

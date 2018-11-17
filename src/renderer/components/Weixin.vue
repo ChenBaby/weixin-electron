@@ -234,9 +234,9 @@ export default {
                 let record = this.recordlists.filter(item => item._id === data.user_id)[0]
                 let recordIndex = record ? this.recordlists.indexOf(record) : 0
                 let messageData = {
-                    "message": data.message,
-                    "user_id": data.user_id,
-                    "time": Date.now()
+                    message: data.message,
+                    user_id: data.user_id,
+                    time: Date.now()
                 }
                 if (!record) {
                     record = this.contactlists.filter(item => item._id === data.user_id)[0]
@@ -271,21 +271,21 @@ export default {
     },
     data () {
         return {
-            "index": 0,
-            "searchfocused": false,
-            "textareafocused": true,
-            "chatcontent": '',
-            "errmsgShow": false,
-            "infoPopuped": false,
-            "settingPopuped": false,
-            "recordlists": [],
-            "contactlists": [],
-            "chattingUser": '',
-            "activeIndex": null,
-            "maximized": false
+            index: 0,
+            searchfocused: false,
+            textareafocused: true,
+            chatcontent: '',
+            errmsgShow: false,
+            infoPopuped: false,
+            settingPopuped: false,
+            recordlists: [],
+            contactlists: [],
+            chattingUser: '',
+            activeIndex: null,
+            maximized: false
         }
     },
-    "methods": {
+    methods: {
         closePopupPanel (event) {
             var infoBox = this.$refs.userInfo
             var settingBox = this.$refs.setting
@@ -319,15 +319,15 @@ export default {
                 if (this.chatcontent) {
                     var content = this.chatcontent.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
                     var data = {
-                        "user_id": this.chattingUser._id,
-                        "message": content,
-                        "type": 'send'
+                        user_id: this.chattingUser._id,
+                        message: content,
+                        type: 'send'
                     }
                     sendSocket(data)
                     let messageData = {
-                        "message": content,
-                        "user_id": this.currentUser._id,
-                        "time": Date.now()
+                        message: content,
+                        user_id: this.currentUser._id,
+                        time: Date.now()
                     }
                     this.chattingUser.contents.push(messageData)
                     this.chattingUser.lastrecord = this.chatcontent.replace(/(\n || \s+$)/g, '')
@@ -357,7 +357,7 @@ export default {
             this.$store.dispatch('signOut').then(res => {
                 if (res.success) {
                     this.$router.push({
-                        "path": '/'
+                        path: '/'
                     })
                 }
             })
@@ -388,8 +388,8 @@ export default {
             } else {
                 record = {
                     ...user,
-                    "lastRecordTime": Date.now(),
-                    "contents": []
+                    lastRecordTime: Date.now(),
+                    contents: []
                 }
                 this.recordlists.push(record)
             }
@@ -435,36 +435,36 @@ export default {
             })
         }
     },
-    "directives": {
-        "focus": {
-            "inserted": function (el, {value}) {
+    directives: {
+        focus: {
+            inserted: function (el, {value}) {
                 if (value) {
                     el.focus()
                 }
             },
-            "componentUpdated": function (el, {value}) {
+            componentUpdated: function (el, {value}) {
                 if (value) {
                     el.focus()
                 }
             }
         }
     },
-    "watch": {
+    watch: {
         currentUser () {},
-        "chattingUser": {
+        chattingUser: {
             handler (newValue, oldValue) {},
-            "deep": true
+            deep: true
         },
-        "recordlists": {
+        recordlists: {
             handler (newValue, oldValue) {},
-            "deep": true
+            deep: true
         }
     },
-    "computed": {
+    computed: {
         currentUser () {
             return {
                 ...this.$store.state.user,
-                "address": this.$store.state.user.address || '中国'
+                address: this.$store.state.user.address || '中国'
             }
         }
     }

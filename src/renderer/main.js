@@ -15,8 +15,8 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 export default new Vue({
-    "components": { App },
+    components: { App },
     router,
     store,
-    "template": '<App/>'
+    template: '<App/>'
 }).$mount('#app')

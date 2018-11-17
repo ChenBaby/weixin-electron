@@ -25,22 +25,22 @@
 import {sendSocket} from '@/common/socket.js'
 import log from '@/common/fs.js'
 export default {
-    "data": function () {
+    data () {
         return {
-            "user": {
-                "email": '',
-                "password": ''
+            user: {
+                email: '',
+                password: ''
             }
         }
     },
-    "mounted": function () {
+    mounted () {
         // if (localStorage.getItem('isLogged')) {
         //     this.$router.push({
         //         "path": '/weixin'
         //     })
         // }
     },
-    "methods": {
+    methods: {
         signIn () {
             if (this.user.email && this.user.password) {
                 this.$store.dispatch('signIn', {
@@ -48,14 +48,14 @@ export default {
                 })
                     .then(res => {
                         let data = {
-                            "email": this.user.email,
-                            "password": this.user.password,
-                            "type": 'login'
+                            email: this.user.email,
+                            password: this.user.password,
+                            type: 'login'
                         }
                         log.mkdir('log/' + res.data.userInfo._id + '/') // 创建这个用户log的文件夹
                         sendSocket(data)
                         this.$router.push({
-                            "path": '/weixin'
+                            path: '/weixin'
                         })
                     })
             }

@@ -11,7 +11,7 @@
           if (localStorage.getItem('ck')) {
               this.$store.dispatch('getUserInfo').catch(() => {
                   this.$router.push({
-                      "path": '/'
+                      path: '/'
                   })
               })
           }
