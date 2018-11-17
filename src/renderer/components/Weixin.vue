@@ -159,11 +159,11 @@
                     <div class="chat-content scrolling" ref="chatcontentbox">
                         <div class="content-box">
                             <div v-for="(content, index) in chattingUser.contents" :key="index">
-                                <p class="text-left" v-if="content.user.user_id != currentUser._id">
-                                    <span><img :src="content.user.image" alt="user-img" class="user-img"></span>
+                                <p class="text-left" v-if="content.user_id != currentUser._id">
+                                    <span><img :src="chattingUser.image" alt="user-img" class="user-img"></span>
                                     <span class="content content-left" v-html="content.message"></span>
                                 </p>
-                                <p class="text-right" v-else>  
+                                <p class="text-right" v-else>
                                     <span class="content content-right" v-html="content.message"></span>
                                     <span><img :src="currentUser.image" alt="user-img" class="user-img"></span>
                                 </p>
@@ -217,8 +217,8 @@ export default {
     created () {
         log.readdir('log/' + this.currentUser._id, (files) => {
             files.forEach(file => {
-                log.read('log/' + this.currentUser._id + '/' + file, (datas) => {
-                    this.recordlists = datas
+                log.read('log/' + this.currentUser._id + '/' + file, (data) => {
+                    this.recordlists.push(data)
                 })
             })
         })
@@ -231,57 +231,34 @@ export default {
                 this.setIsLogin(data, true)
             }
             if (data.type === 'message') {
-                let hasrecord = false
-                this.recordlists.forEach(item => {
-                    if (item._id === data.user_id) {
-                        hasrecord = true
-                        item.contents = item.contents || []
-                        item.contents.push({
-                            "message": data.message,
-                            "user": {
-                                "user_id": data.user_id,
-                                "image": item.image
-                            }
-                        })
-                        item.lastrecord = data.message
-                        if (this.chattingUser && data.user_id !== this.chattingUser._id) { // 不是正在聊天的窗口，不默认打开聊天框
-                            item.unreads = item.unreads + 1 || 1
-                            this.pushToRecord(item, false)
-                        } else {
-                            this.pushToRecord(item)
-                        }
-                        var path = 'log/' + this.currentUser._id + '/' + data.user_id + '.log'
-                        log.write(path, {
-                            ...item
-                        })
-                    }
-                })
-                if (!hasrecord) {
-                    this.contactlists.forEach(item => {
-                        if (item._id === data.user_id) {
-                            item.contents = item.contents || []
-                            item.contents.push({
-                                "message": data.message,
-                                "user": {
-                                    "user_id": data.user_id,
-                                    "image": item.image
-                                }
-                            })
-                            item.lastrecord = data.message
-                            if (this.chattingUser && data.user_id !== this.chattingUser._id) { // 不是正在聊天的窗口，不默认打开聊天框
-                                item.unreads = item.unreads + 1 || 1
-                                this.pushToRecord(item, false)
-                            } else {
-                                this.pushToRecord(item)
-                            }
-                            var path = 'log/' + this.currentUser._id + '/' + data.user_id + '.log'
-                            log.write(path, {
-                                ...item
-                            })
-                        }
-                    })
+                let record = this.recordlists.filter(item => item._id === data.user_id)[0]
+                let recordIndex = record ? this.recordlists.indexOf(record) : 0
+                let messageData = {
+                    "message": data.message,
+                    "user_id": data.user_id,
+                    "time": Date.now()
                 }
+                if (!record) {
+                    record = this.contactlists.filter(item => item._id === data.user_id)[0]
+                    record.contents = []
+                    this.recordlists.unshift(record)
+                }
+                record.lastrecord = data.message
+                record.lastRecordTime = messageData.time
+                record.contents.push(messageData)
+                if (this.chattingUser && data.user_id !== this.chattingUser._id) { // 不是正在聊天的窗口，不默认打开聊天框
+                    record.unreads = record.unreads + 1 || 1
+                } else {
+                    this.activeIndex = recordIndex
+                    this.chattingUser = record
+                }
+                var path = 'log/' + this.currentUser._id + '/' + data.user_id + '.log'
+                log.write(path, {
+                    ...record
+                })
+                this.index = 0
                 this.scrollToBottom()
+                this.sortRecordList()
             }
         })
         this.$EventBus.$on('sockonlogout', (data) => {
@@ -292,7 +269,7 @@ export default {
         this.$EventBus.$off('onmessage')
         this.$EventBus.$off('sockonlogout')
     },
-    "data": function () {
+    data () {
         return {
             "index": 0,
             "searchfocused": false,
@@ -337,10 +314,7 @@ export default {
         },
         send () {
             if (!this.chattingUser.isLogin) {
-                this.$message({
-                    "message": '该用户是离线状态，不能发送消息',
-                    "type": 'warning'
-                })
+                this.$warning('该用户是离线状态，不能发送消息')
             } else {
                 if (this.chatcontent) {
                     var content = this.chatcontent.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
@@ -349,24 +323,21 @@ export default {
                         "message": content,
                         "type": 'send'
                     }
-                    sendSocket(data, res => {
-                        console.log(res)
-                        if (res.data.type === 'send_message') {
-                            this.chattingUser.contents.push({
-                                "message": content,
-                                "user": {
-                                    "user_id": this.currentUser._id
-                                }
-                            })
-                            this.chattingUser.lastrecord = this.chatcontent.replace(/(\n || \s+$)/g, '')
-                            var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
-                            log.write(path, {
-                                ...this.chattingUser
-                            })
-                            this.chatcontent = ''
-                            this.scrollToBottom()
-                        }
+                    sendSocket(data)
+                    let messageData = {
+                        "message": content,
+                        "user_id": this.currentUser._id,
+                        "time": Date.now()
+                    }
+                    this.chattingUser.contents.push(messageData)
+                    this.chattingUser.lastrecord = this.chatcontent.replace(/(\n || \s+$)/g, '')
+                    this.chattingUser.lastRecordTime = messageData.time
+                    var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
+                    log.write(path, {
+                        ...this.chattingUser
                     })
+                    this.chatcontent = ''
+                    this.scrollToBottom()
                 } else {
                 // 不能发送空消息
                     this.errmsgShow = true
@@ -384,7 +355,6 @@ export default {
         },
         logout () {
             this.$store.dispatch('signOut').then(res => {
-                console.log(res)
                 if (res.success) {
                     this.$router.push({
                         "path": '/'
@@ -398,50 +368,39 @@ export default {
                 this.checkIsLogin()
             })
         },
-        openChatBox (user, index, isopen = true) { // isopen 是否切换至正在聊天
-            if (isopen) {
-                this.activeIndex = index
-                this.chattingUser = user
-                this.recordlists.forEach((item, i) => {
-                    if (item._id === this.chattingUser._id) {
-                        item.unreads = 0
-                        var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
-                        log.write(path, { // 从本地聊天记录生成的文件，再打开点击标记已读
-                            ...this.chattingUser
-                        })
-                    }
-                })
-            } else {
-                this.recordlists.forEach((item, i) => {
-                    if (item._id === this.chattingUser._id) {
-                        this.activeIndex = i
-                    }
-                })
-            }
+        openChatBox (user, index) { // isopen 是否切换至正在聊天
+            this.activeIndex = index
+            this.chattingUser = user
+            user.unreads = 0
+            var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
+            log.write(path, { // 从本地聊天记录生成的文件，再打开点击标记已读
+                ...this.chattingUser
+            })
             this.scrollToBottom()
         },
-        pushToRecord (user, tochat = true) { // 聊天记录栏新增一条未读消息记录
-            if (user._id === this.currentUser._id) return
-            user.contents = user.contents || []
-            if (this.recordlists.length === 0) {
-                this.recordlists.push(user)
-            } else {
-                var isInlist = false
-                var lists = null
-                this.recordlists.forEach((item, index) => {
-                    if (item._id === user._id) {
-                        isInlist = true
-                        lists = this.recordlists.splice(index, 1)
-                    }
-                })
-                if (!isInlist) {
-                    this.recordlists.unshift(user)
-                } else {
-                    this.recordlists = lists.concat(this.recordlists)
-                }
+        pushToRecord (user) { // 聊天记录栏新增一条未读消息记录
+            if (user._id === this.currentUser._id) {
+                return
             }
+            let record = this.recordlists.filter(item => item._id === user._id)[0]
+            if (record) {
+                record.lastRecordTime = Date.now()
+            } else {
+                record = {
+                    ...user,
+                    "lastRecordTime": Date.now(),
+                    "contents": []
+                }
+                this.recordlists.push(record)
+            }
+            this.sortRecordList()
             this.index = 0
-            this.openChatBox(user, 0, tochat)
+            this.openChatBox(record, 0)
+        },
+        sortRecordList () {
+            this.recordlists.sort((a, b) => {
+                return b.lastRecordTime - a.lastRecordTime
+            })
         },
         maximize () {
             ipc.send('max')
