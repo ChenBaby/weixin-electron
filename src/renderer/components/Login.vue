@@ -52,17 +52,10 @@ export default {
                             "password": this.user.password,
                             "type": 'login'
                         }
+                        log.mkdir('log/' + res.data.userInfo._id + '/') // 创建这个用户log的文件夹
                         sendSocket(data, response => {
-                            console.log('websocket登录：' + response)
-                            if (response.type === 'login') {
-                                if (this.$store.state.isLogged) return
-                                log.mkdir('log/' + response.user_id + '/') // 创建这个用户log的文件夹
-                            }
                             if (response.success === false && response.message) {
-                                this.$message({
-                                    "message": response.message,
-                                    "type": 'error'
-                                })
+                                this.$error(response.message)
                             }
                         })
                         this.$router.push({
