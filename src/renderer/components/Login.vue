@@ -53,11 +53,7 @@ export default {
                             "type": 'login'
                         }
                         log.mkdir('log/' + res.data.userInfo._id + '/') // 创建这个用户log的文件夹
-                        sendSocket(data, response => {
-                            if (response.success === false && response.message) {
-                                this.$error(response.message)
-                            }
-                        })
+                        sendSocket(data)
                         this.$router.push({
                             "path": '/weixin'
                         })
