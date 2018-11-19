@@ -52,6 +52,7 @@ export default {
                             password: this.user.password,
                             type: 'login'
                         }
+                        log.mkdir('log/') // 创建这个用户log的文件夹
                         log.mkdir('log/' + res.data.userInfo._id + '/') // 创建这个用户log的文件夹
                         sendSocket(data)
                         this.$router.push({
