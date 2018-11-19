@@ -286,7 +286,7 @@ export default {
         }
     },
     filters: {
-        formatDate (value, format = 'YYYY-MM-DD') {
+        formatDate (value, format = 'YYYY-MM-DD') { // 用法 DOM元素过滤 | formatDate('YYYY-MM-DD hh:mm')
             let getDate = new Date(value)
             let obj = {
                 'Y+': getDate.getFullYear(),
@@ -297,8 +297,9 @@ export default {
             }
             for (let k in obj) {
                 let reg = new RegExp('(' + k + ')')
-                if (reg.test(format)) {
-                    format = format.replace(RegExp.$1, obj[k])
+                let matches = format.match(reg)
+                if (matches) {
+                    format = format.replace(matches[1], obj[k])
                 }
             }
             return format
