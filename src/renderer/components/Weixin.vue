@@ -105,13 +105,14 @@
                 <div class="contact-container full-height" v-else>
                     <div class="recordlist list scrolling full-height" v-show="index == 0">
                         <ul>
-                            <li v-for="(user, i) in recordlists" :key="i" :class="{ active: activeIndex === i }" @click="openChatBox(user, i)">
+                            <li v-for="(user, i) in rangRecordList" :key="i" :class="{ active: activeIndex === i }" @click="openChatBox(user, i)">
                                 <div class="li-img">
                                     <img :src="user.image" alt="chat-list-img" :class="user.isLogin ? '' : 'gray'">
                                     <label class="mark-unread" v-show="user.unreads">{{user.unreads}}</label>
                                 </div>
                                 <div class="li-text">
-                                    <span class="name"><label>{{user.name}}</label><label class="time">18/10/10</label></span>
+                                    <span class="name"><label>{{user.name}}</label>
+                                    <label class="time">{{user.lastRecordTime | formatDate}}</label></span>
                                     <span class="text">{{user.lastrecord}}</span>
                                 </div>
                             </li>
@@ -258,7 +259,6 @@ export default {
                 })
                 this.index = 0
                 this.scrollToBottom()
-                this.sortRecordList()
             }
         })
         this.$EventBus.$on('sockonlogout', (data) => {
@@ -283,6 +283,26 @@ export default {
             chattingUser: '',
             activeIndex: null,
             maximized: false
+        }
+    },
+    filters: {
+        formatDate (value, format = 'YYYY-MM-DD') { // 用法 DOM元素过滤 | formatDate('YYYY-MM-DD hh:mm')
+            let getDate = new Date(value)
+            let obj = {
+                'Y+': getDate.getFullYear(),
+                'M+': getDate.getMonth() + 1,
+                'D+': getDate.getDate() < 10 ? `0${getDate.getDate()}` : getDate.getDate(),
+                'h+': getDate.getHours() < 10 ? `0${getDate.getHours()}` : getDate.getHours(),
+                'm+': getDate.getMinutes() < 10 ? `0${getDate.getMinutes()}` : getDate.getMinutes()
+            }
+            for (let k in obj) {
+                let reg = new RegExp('(' + k + ')')
+                let matches = format.match(reg)
+                if (matches) {
+                    format = format.replace(matches[1], obj[k])
+                }
+            }
+            return format
         }
     },
     methods: {
@@ -393,14 +413,8 @@ export default {
                 }
                 this.recordlists.push(record)
             }
-            this.sortRecordList()
             this.index = 0
             this.openChatBox(record, 0)
-        },
-        sortRecordList () {
-            this.recordlists.sort((a, b) => {
-                return b.lastRecordTime - a.lastRecordTime
-            })
         },
         maximize () {
             ipc.send('max')
@@ -466,6 +480,9 @@ export default {
                 ...this.$store.state.user,
                 address: this.$store.state.user.address || '中国'
             }
+        },
+        rangRecordList () {
+            return this.recordlists.sort((a, b) => b.lastRecordTime - a.lastRecordTime)
         }
     }
 }
