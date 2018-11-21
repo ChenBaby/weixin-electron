@@ -138,8 +138,8 @@
             <div class="chat-box">
                 <div class="chat-header">
                     <p class="toolbar">
-                        <a href="javascript:void(0)" class="popper-link" title="置顶">
-                            <i class="icon icon-zhiding"></i>
+                        <a href="javascript:void(0)" class="popper-link" title="置顶" @click="placeTop">
+                            <i class="icon icon-zhiding" :class="{sticked: sticked}"></i>
                         </a>
                         <a href="javascript:void(0)" class="popper-link" title="最小化" @click="minimize">
                             <i class="icon icon-minimize"></i>
@@ -253,10 +253,6 @@ export default {
                     this.activeIndex = recordIndex
                     this.chattingUser = record
                 }
-                var path = 'log/' + this.currentUser._id + '/' + data.user_id + '.log'
-                log.write(path, {
-                    ...record
-                })
                 this.index = 0
                 this.scrollToBottom()
             }
@@ -268,6 +264,7 @@ export default {
     beforeDestroy () {
         this.$EventBus.$off('onmessage')
         this.$EventBus.$off('sockonlogout')
+        this.write()
     },
     data () {
         return {
@@ -282,7 +279,8 @@ export default {
             contactlists: [],
             chattingUser: '',
             activeIndex: null,
-            maximized: false
+            maximized: false,
+            sticked: false
         }
     },
     filters: {
@@ -352,10 +350,6 @@ export default {
                     this.chattingUser.contents.push(messageData)
                     this.chattingUser.lastrecord = this.chatcontent.replace(/(\n || \s+$)/g, '')
                     this.chattingUser.lastRecordTime = messageData.time
-                    var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
-                    log.write(path, {
-                        ...this.chattingUser
-                    })
                     this.chatcontent = ''
                     this.scrollToBottom()
                 } else {
@@ -392,10 +386,6 @@ export default {
             this.activeIndex = index
             this.chattingUser = user
             user.unreads = 0
-            var path = 'log/' + this.currentUser._id + '/' + this.chattingUser._id + '.log'
-            log.write(path, { // 从本地聊天记录生成的文件，再打开点击标记已读
-                ...this.chattingUser
-            })
             this.scrollToBottom()
         },
         pushToRecord (user) { // 聊天记录栏新增一条未读消息记录
@@ -416,6 +406,10 @@ export default {
             this.index = 0
             this.openChatBox(record, 0)
         },
+        placeTop () {
+            ipc.send('top')
+            this.sticked = !this.sticked
+        },
         maximize () {
             ipc.send('max')
             this.maximized = !this.maximized
@@ -424,6 +418,7 @@ export default {
             ipc.send('min')
         },
         close () {
+            this.write()
             ipc.send('close')
         },
         setIsLogin (data, is) {
@@ -446,6 +441,14 @@ export default {
                         break
                     }
                 }
+            })
+        },
+        write () {
+            this.recordlists.forEach(item => {
+                var path = 'log/' + this.currentUser._id + '/' + item._id + '.log'
+                log.write(path, {
+                    ...item
+                })
             })
         }
     },
@@ -472,7 +475,8 @@ export default {
         recordlists: {
             handler (newValue, oldValue) {},
             deep: true
-        }
+        },
+        rangRecordList () {}
     },
     computed: {
         currentUser () {
@@ -482,7 +486,13 @@ export default {
             }
         },
         rangRecordList () {
-            return this.recordlists.sort((a, b) => b.lastRecordTime - a.lastRecordTime)
+            let lists = this.recordlists.sort((a, b) => b.lastRecordTime - a.lastRecordTime)
+            lists.forEach((item, index) => {
+                if (item._id === this.chattingUser._id) {
+                    this.activeIndex = index
+                }
+            })
+            return lists
         }
     }
 }
@@ -779,7 +789,7 @@ export default {
             }
             .li-text {
                 padding-left: 10px;
-                width: 100%;
+                width: calc(100% - 50px);
                 span {
                     display: block;
                     height: 20px;
@@ -843,6 +853,9 @@ export default {
             .icon {
                 margin: 0 6px;
             }
+            .icon-zhiding.sticked {
+                background-color: #eee;
+            }
             .icon-maximize {
                 font-size: 16px;
                 position: relative;
@@ -879,7 +892,7 @@ export default {
             position: relative;
         }
         .chat-content {
-            padding: 5px 30px 0;
+            padding: 5px 30px 20px;
             height: 73.4%;
             box-sizing: border-box;
 
