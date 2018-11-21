@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -19,13 +19,16 @@ function createWindow () {
     /**
    * Initial window options
    */
+    Menu.setApplicationMenu(null) // 关闭菜单栏
     mainWindow = new BrowserWindow({
         height: 724,
         useContentSize: true,
         width: 1024,
         minWidth: 800,
-        minHeight: 600
+        minHeight: 600,
+        frame: false
     })
+    mainWindow.webContents.closeDevTools() // 关闭控制台
 
     mainWindow.loadURL(winURL)
 
@@ -59,6 +62,14 @@ ipcMain.on('max', e => {
 ipcMain.on('min', e => mainWindow.minimize())
 
 ipcMain.on('close', e => mainWindow.close())
+
+ipcMain.on('top', e => {
+    if (mainWindow.isAlwaysOnTop) {
+        mainWindow.setAlwaysOnTop(false)
+    } else {
+        mainWindow.setAlwaysOnTop(true)
+    }
+})
 /**
  * Auto Updater
  *
