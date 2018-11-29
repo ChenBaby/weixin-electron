@@ -3,6 +3,17 @@
         <div class="bg-wrap">
         </div>
         <div class="login-wrap">
+            <p class="toolbar text-right">
+                <a href="javascript:void(0)" class="popper-link" title="最小化" @click="minimize">
+                    <i class="icon icon-minimize"></i>
+                </a>
+                <a href="javascript:void(0)" class="popper-link max-link" title="最大化" @click="maximize">
+                    <i class="icon" :class="maximized ? 'icon-unmaximize' : 'icon-maximize'"></i>
+                </a>
+                <a href="javascript:void(0)" class="popper-link close-link" title="关闭" @click="close">
+                    <i class="icon icon-close"></i>
+                </a>
+            </p>
             <form>
                 <p>
                     <label>邮箱名</label>
@@ -23,6 +34,7 @@
 </template>
 <script>
 import {sendSocket} from '@/common/socket.js'
+import {ipcRenderer} from 'electron'
 import log from '@/common/fs.js'
 export default {
     data () {
@@ -30,7 +42,8 @@ export default {
             user: {
                 email: '',
                 password: ''
-            }
+            },
+            maximized: false
         }
     },
     mounted () {
@@ -60,6 +73,16 @@ export default {
                         })
                     })
             }
+        },
+        maximize () {
+            ipcRenderer.send('max')
+            this.maximized = !this.maximized
+        },
+        minimize () {
+            ipcRenderer.send('min')
+        },
+        close () {
+            ipcRenderer.send('close')
         }
     }
 }
@@ -124,6 +147,13 @@ export default {
             display: block;
             margin-top: 10px;
             color: inherit;
+        }
+        .toolbar {
+            background-color: #fff;
+            .popper-link {
+                padding: 5px 10px;
+                display: inline-block;
+            }
         }
     }
 </style>
