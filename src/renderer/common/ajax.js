@@ -1,6 +1,7 @@
 import axios from 'axios'
-import {Loading, Message} from 'element-ui'
+import {Loading} from 'element-ui'
 import thisvue from '../main.js'
+import Message from '../plugin/message'
 var options = {
     baseURL: 'https://richole.cn',
     withCredentials: true
@@ -19,9 +20,7 @@ _ajax.interceptors.request.use(config => {
 }, error => {
     // loading = Loading.service({})
     loading.close() // 关闭加载前，记得重新定义实例
-    Message.error({
-        message: '加载超时'
-    })
+    Message.$error('加载超时')
     return Promise.reject(error)
 })
 
@@ -37,9 +36,7 @@ error => {
     //     "text": '拼命加载中...'
     // })
     loading.close()
-    Message.error({
-        message: '加载失败'
-    })
+    Message.$error('加载失败')
     return Promise.reject(error)
 })
 
@@ -62,10 +59,10 @@ var ajax = {
             .catch(err => {
                 console.log(err)
                 if (err.data.errorId === 999) {
-                    !noAlert && alert(err.data.message)
+                    !noAlert && Message.$error(err.data.message)
                     thisvue.$router.push('/')
                 } else {
-                    !noAlert && alert(err.data.message)
+                    !noAlert && Message.$error(err.data.message)
                 }
                 return Promise.reject(err)
             })
@@ -86,10 +83,10 @@ var ajax = {
             .catch(err => {
                 console.log(err)
                 if (err.data.errorId === 999) {
-                    alert(err.data.message)
+                    Message.$error(err.data.message)
                     thisvue.$router.push('/')
                 } else {
-                    alert(err.data.message)
+                    Message.$error(err.data.message)
                 }
                 return Promise.reject(err)
             })
@@ -110,10 +107,10 @@ var ajax = {
             .catch(err => {
                 console.log(err)
                 if (err.data.errorId === 999) {
-                    alert(err.data.message)
+                    Message.$error(err.data.message)
                     thisvue.$router.push('/')
                 } else {
-                    alert(err.data.message)
+                    Message.$error(err.data.message)
                 }
                 return Promise.reject(err)
             })

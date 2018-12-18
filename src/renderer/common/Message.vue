@@ -54,24 +54,60 @@ export default {
         }
         &.isinfo {
             background-color: #edf2fc;
+            &::before {
+                content: '';
+                background-color: #798498;
+                width: 3px;
+                height: 40px;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
             .icon, span {
                 color: #909399;
             }
         }
         &.iswarning {
             background-color: #fdf6ec;
+            &::before {
+                content: '';
+                background-color: #f0a73f;
+                width: 3px;
+                height: 40px;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
             .icon, span {
                 color: #e6a23c;
             }
         }
         &.issuccess {
             background-color: #f0f9eb;
+            &::before {
+                content: '';
+                background-color: #649b43;
+                width: 3px;
+                height: 40px;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
             .icon, span {
                 color: #67c23a;
             }
         }
         &.iserror {
             background-color: #fef0f0;
+            &::before {
+                content: '';
+                background-color: #da5858;
+                width: 3px;
+                height: 40px;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
             .icon, span {
                 color: #f56c6c;
             }
